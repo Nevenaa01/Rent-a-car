@@ -1,0 +1,456 @@
+Vue.component("PrikazSvihKorisnika", {
+	data: function () {
+		return {
+			korisnici:null,
+			
+			ulogovan: null,
+			korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+			rastuceKorIme:true,
+			rastuceIme:true,
+			rastucePrezime:true,
+			rastuceBodovi:true,
+			filter:{uloga:"",tipKupca:""},
+			kupac:false,
+			kupci:null,
+			dugmePretragaPritisnuto: true,
+			dugmeFiltriranjaPritisnuto: false,
+			pretraga: {korIme: null, ime: null, prezime: null},
+			admin:"Administrator",
+			da:"da"
+		}
+	},
+	template: ` 
+ 	<div class="pozadina">
+ 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" v-bind:href="'/WebShopREST/#/'">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="vr text-light m-0 p-0">
+
+                       </ul>
+                        <ul class="navbar-nav w-75">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link active">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korisnik.korisnickoIme" class="nav-link" v-if="ulogovan">Profil</a></li>
+                        </ul>
+                        
+                        <ul class="navbar-nav navbar-right">
+                            <li><a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Uloguj se</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/registracija'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Registuj se</a></li>
+                        </ul>
+                    </div>
+                </nav>
+		<br><br><br>
+		
+			<label v-if="!ulogovan">Sesija istekla. Uloguj se ponovo!</label>
+		    <div class="container" v-if="ulogovan">
+        <div class="row">
+            <div class="col-sm-6 d-flex justify-content-end">
+                <input type="radio" v-on:click="prikazZaPretragu" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+                <a class="linkLabela"><label class="btn btnSearch" for="option1">Pretraga</label><a>
+            </div>
+            <div class="col-sm-6 d-flex justify-content-start">
+                <input type="radio" v-on:click="prikazZaFiltriranje" class="btn-check" name="options" id="option2" autocomplete="off">
+                <a class="linkLabela"><label class="btn btnSearch" for="option2">Filtriranje</label><a>
+            </div>
+        </div><br>
+        <div class="col-sm-12">
+            <div class="row pretraga bg-white shadow rounded sadrzajDiva">
+                <div v-if="dugmePretragaPritisnuto">
+                    <div style="padding-right: 0%" class="row">
+                        <div class="col-sm-10">
+                            <h2 class="headerUDivu">Pretraga</h2>
+                        </div>
+                        <div class="col-sm-2">
+                            <button v-on:click="refresh" class="btn px-4 float-end mt-4 btnRefresh"><i class="fa fa-refresh"></i></button>
+                        </div>
+                    </div>
+                            <div class="col-sm-12">
+                                <label>Korisnicko ime</label>
+                                <div class="input-group inputPretraga">
+                                <div class="input-group">
+                                    <input type="text" v-model="pretraga.korIme" class="inputPretraga form-control" placeholder="Korisnicko ime">                                                
+                                </div>
+                            </div><br>
+    
+                            <div class="col-sm-12">
+                                <label>Ime</label>
+                                <div class="input-group inputPretraga">
+                                <div class="input-group">
+                                    <input type="text" v-model="pretraga.ime" class="inputPretraga form-control" placeholder="Ime">                                                
+                                </div>
+                            </div><br>
+    
+                            <div class="col-sm-12">
+                                <label>Prezime</label>
+                                <div class="input-group">
+                                    <input type="text" v-model="pretraga.prezime" class="inputPretraga form-control" placeholder="Prezime">
+                                </div>
+                    </div><br>
+    
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" v-on:click="ponisti" class="btn px-4 float-end mt-4 btnSearch btnPonisti">Poništi</button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" v-on:click="pretrazi" class="btn px-4 float-end mt-4 btnSearch">Pretraži</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            </div><br><br>
+            <div v-if="dugmeFiltriranjaPritisnuto">
+                    <div style="padding-right: 0%" class="row">
+                        <div class="col-sm-10">
+                            <h2 class="headerUDivu">Filtriranje</h2>
+                        </div>
+                        <div class="col-sm-2">
+                            <button v-on:click="refresh" class="btn px-4 float-end mt-4 btnRefresh"><i class="fa fa-refresh"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" v-if="dugmeFiltriranjaPritisnuto" >
+                        <label>Uloga</label>
+		                    	<div class="input-group">
+										<select class="inputPretraga form-control" v-model="filter.uloga">
+											<option value="Kupac">Kupac</option>
+											<option value="Menadzer">Menadzer</option>
+											<option value="Administrator">Administrator</option>
+										</select>
+		                        </div>
+                            </div><br>
+                                                
+                            <div class="col-sm-12" v-if="kupac" >
+                                <label>Tip kupca</label>
+		                            <div class="input-group">
+										<select class="inputPretraga form-control" v-model="filter.tipKupca">
+											<option value="Bronzani">Bronzani</option>
+											<option value="Srebrni">Srebrni</option>
+											<option value="Zlatni">Zlatni</option>
+											<option value="Svi">Svi</option>
+										</select>
+									</div>
+                            </div><br>
+                    </div><br>
+    
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" v-if="dugmeFiltriranjaPritisnuto" v-on:click="ponistiFiltriranje()" class="btn px-4 float-end mt-4 btnSearch btnPonisti">Poništi</button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" v-if="dugmeFiltriranjaPritisnuto"  v-on:click="filtriraj()" class="btn px-4 float-end mt-4 btnSearch">Filtriraj</button>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div><br><br>
+		<br><br>
+			<table class="styled-table" v-if="kupac && ulogovan">
+				  <thead>
+				    <tr>
+				      <th class="centralnoPoravnanje">Korisnicko Ime  <i v-on:click="sortkupac('korIme')" class="fa fa-sort"></i> </th>
+				      <th class="centralnoPoravnanje">Lozinka</th>
+				      <th class="centralnoPoravnanje">Ime <i v-on:click="sortkupac('ime')" class="fa fa-sort"></i></th>
+				      <th class="centralnoPoravnanje">Prezime <i v-on:click="sortkupac('prezime')" class="fa fa-sort"></i></th>
+				      <th class="centralnoPoravnanje">Pol</th>
+				      <th class="centralnoPoravnanje">Datum Rodjenja</th>
+				      <th class="centralnoPoravnanje">Uloga</th>
+				      <th class="centralnoPoravnanje">Tip kupca</th>
+				      <th class="centralnoPoravnanje">Bodovi  <i v-on:click="sortkupac('bodovi')" class="fa fa-sort"></i></th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr v-for="k in kupci">
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.korisnickoIme }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.lozinka }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.ime }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.prezime }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.pol }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.datumRodjenja }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.uloga }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.tipKupca }}</td>
+				      <td :class="{ 'highlighted': k.sumnjiv }">{{ k.brojBodova }}</td>
+				    </tr>
+				  </tbody>
+				</table><br><br> 
+				<table class="styled-table" v-if="!kupac && ulogovan">
+				  <thead>
+				    <tr>
+				      <th class="centralnoPoravnanje">Korisnicko Ime  <i v-on:click="sort('korIme')" class="fa fa-sort"></i> </th>
+				      <th class="centralnoPoravnanje">Lozinka</th>
+				      <th class="centralnoPoravnanje">Ime <i v-on:click="sort('ime')" class="fa fa-sort"></i></th>
+				      <th class="centralnoPoravnanje">Prezime <i v-on:click="sort('prezime')" class="fa fa-sort"></i></th>
+				      <th class="centralnoPoravnanje">Pol</th>
+				      <th class="centralnoPoravnanje">Datum Rodjenja</th>
+				      <th class="centralnoPoravnanje">Uloga</th>
+				      <th class="centralnoPoravnanje">Blokiraj</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr v-for="k in korisnici">
+				      <td>{{ k.korisnickoIme }}</td>
+				      <td>{{ k.lozinka }}</td>
+				      <td>{{ k.ime }}</td>
+				      <td>{{ k.prezime }}</td>
+				      <td>{{ k.pol }}</td>
+				      <td>{{ k.datumRodjenja }}</td>
+				      <td>{{ k.uloga }}</td>
+				      <td>
+				      	<button type="submit" v-if="k.uloga!==admin && k.blokiran!==da" v-on:click="Blokiraj(k.id)" class="btn px-4 float-end btnSearch">Blokiraj</button>
+				      	<label v-if="k.blokiran===da">Blokiran</label>
+				      </td>
+				    </tr>
+				  </tbody>
+				</table><br><br>
+	        <br><br>
+ 					<footer class="text-center text-lg-start text-white d-flex flex-column">
+					    <section class="d-flex justify-content-between p-4 footerSocijalneMreze">
+					      <div class="me-5">
+					        <span>Posetite nas i na društvenim mrežma:</span>
+					      </div>
+					      
+					      <div>
+					        <a href="https://www.facebook.com/" class="text-white me-4">
+					          <i class="fa fa-facebook"></i>
+					        </a>
+					        <a href="https://www.twitter.com/" class="text-white me-4">
+					          <i class="fa fa-twitter"></i>
+					        </a>
+					        <a href="https://www.google.com/" class="text-white me-4">
+					          <i class="fa fa-google"></i>
+					        </a>
+					        <a href="https://www.instagram.com/" class="text-white me-4">
+					          <i class="fa fa-instagram"></i>
+					        </a>
+					        <a href="https://www.linkedin.com/" class="text-white me-4">
+					          <i class="fa fa-linkedin"></i>
+					        </a>
+					        <a href="https://www.pinterest.com/" class="text-white me-4">
+					          <i class="fa fa-pinterest"></i>
+					        </a>
+					      </div>
+					    </section>
+					
+					    <section>
+					      <div class="text-center text-md-start mt-5">
+					        <div class="row mt-3">
+					          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4 ps-0">
+					            <h6 class="text-uppercase fw-bold">Rent A Car - F1 edition</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p>
+					              Rent A Car - F1 edition je sajt sa željom da pomogne i ponudi 
+					              vozila koja će učiniti da se osećate kao da ste
+					              pravi vozač F1.
+					            </p>
+					          </div>
+
+					          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+					            <h6 class="text-uppercase fw-bold">Vozila</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p class="text-white">
+					            	Automobil
+					            </p>
+					            <p class="text-white">
+					            	Kombi
+					            </p>
+					            <p class="text-white">
+					            	Mobilehome
+					            </p>
+					          </div>
+
+					          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-4 ps-2">
+					            <h6 class="text-uppercase fw-bold">Korisni linkovi</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p>
+					              <a v-bind:href="'/WebShopREST/#/'" class="text-white">Rent a car objekti</a>
+					            </p>
+					            <p>
+					              <a v-bind:href="'/WebShopREST/#/profil/'" class="text-white">Profil</a>
+					            </p>
+					            <p>
+					              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+					            </p>
+					            <p>
+					              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+					            </p>
+					          </div>
+
+					          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-md-0 mb-4">
+					            <!-- Links -->
+					            <h6 class="text-uppercase fw-bold">Kontakt</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p><i class="fa fa-home mr-3"></i> Novi Sad, Srbija</p>
+					            <p><i class="fa fa-envelope mr-3"></i> najjaciTim@gmail.com</p>
+					            <p><i class="fa fa-phone mr-3"></i> +381 61 234 5678</p>
+					            <p><i class="fa fa-print mr-3"></i> +381 61 234 5678</p>
+					          </div>
+					        </div>
+					      </div>
+					    </section>
+					  </footer>
+
+				  </div>
+
+	`
+	,
+	methods: {
+		sort : function(parametar){
+			var rastuce
+			
+			if(parametar === 'korIme')
+				rastuce = this.rastuceKorIme
+			else if(parametar === 'ime')
+				rastuce = this.rastuceIme
+			else if(parametar === 'prezime')
+				rastuce = this.rastucePrezime
+							
+			axios
+				.get('rest/korisnik/sort/' + parametar + '/' + rastuce)
+				.then(response => {
+					this.korisnici = response.data
+					
+					if(parametar === 'korIme')
+						this.rastuceKorIme = !this.rastuceKorIme
+					else if(parametar === 'ime')
+						this.rastuceIme = !this.rastuceIme
+					else if(parametar === 'prezime')
+						this.rastucePrezime = !this.rastucePrezime
+					})
+		},sortkupac : function(parametar){
+			var rastuce
+			
+			if(parametar === 'korIme')
+				rastuce = this.rastuceKorIme
+			else if(parametar === 'ime')
+				rastuce = this.rastuceIme
+			else if(parametar === 'prezime')
+				rastuce = this.rastucePrezime
+			else
+				rastuce=this.rastuceBodovi
+							
+			axios
+				.get('rest/kupac/sort/' + parametar + '/' + rastuce)
+				.then(response => {
+					this.kupci = response.data
+					
+					if(parametar === 'korIme')
+						this.rastuceKorIme = !this.rastuceKorIme
+					else if(parametar === 'ime')
+						this.rastuceIme = !this.rastuceIme
+					else if(parametar === 'prezime')
+						this.rastucePrezime = !this.rastucePrezime
+					else
+						this.rastuceBodovi=!this.rastuceBodovi
+					})
+		},
+		filtriraj : function(){
+			if(this.filter.uloga === null || this.filter.uloga === "")
+				this.filter.uloga = "defaultna"
+			if(this.filter.uloga==="Kupac")
+			{
+				this.kupac=true
+				if(this.filter.tipKupca!==null && this.filter.tipKupca!=="")
+					return axios
+					.get('rest/kupac/filter/' + this.filter.tipKupca)
+					.then(response => {
+						this.kupci = response.data})
+			}
+			if(this.filter.uloga!=="Kupac" && this.kupac)
+			{
+				this.kupac=false;
+			}			
+			axios
+				.get('rest/korisnik/filter/' + this.filter.uloga)
+				.then(response => {
+					this.korisnici = response.data})
+					
+		},
+		
+		ponistiFiltriranje : function(){
+			axios
+				.get('rest/korisnik/svikorisnici')
+				.then(response => {
+					this.korisnici = response.data
+					this.kupac=false;
+					this.filter.uloga=null
+					this.filter.tipKupca=null
+				})
+		},
+		
+		prikazZaPretragu : function(){
+			this.dugmePretragaPritisnuto = true
+			this.dugmeFiltriranjaPritisnuto = false
+		},
+		
+		prikazZaFiltriranje : function(){
+			this.dugmePretragaPritisnuto = false
+			this.dugmeFiltriranjaPritisnuto = true
+		},
+		refresh : function(){
+			axios
+				.get('rest/korisnik/svikorisnici')
+				.then(response => (this.korisnici = response.data))
+		},
+		ponisti:function()
+		{
+			this.pretraga.korIme = null;
+			this.pretraga.ime = null;
+			this.pretraga.prezime = null;
+		},
+		pretrazi:function()
+		{
+			if(this.pretraga.korIme === null || this.pretraga.korIme === "")
+				this.pretraga.korIme = "defaultno";
+			if(this.pretraga.ime === null || this.pretraga.ime === "")
+				this.pretraga.ime = "defaultno";
+			if(this.pretraga.prezime === null || this.pretraga.prezime === "")
+				this.pretraga.prezime = "defaultno";
+				
+				axios
+					.get('rest/korisnik/pretrazi/' + this.pretraga.korIme + '/' + this.pretraga.ime + '/' + this.pretraga.prezime)
+					.then(response => {
+						this.korisnici = response.data
+						
+						if(this.pretraga.korIme === "defaultno")
+							this.pretraga.korIme = null;
+						if(this.pretraga.ime === "defaultno")
+							this.pretraga.ime = null;
+						if(this.pretraga.prezime === "defaultno")
+							this.pretraga.prezime = null;
+				})
+		},
+		Blokiraj:function(idx)
+		{
+			axios.put("rest/korisnik/blokiraj/"+idx);
+			axios
+			.get('rest/korisnik/svikorisnici')
+			.then(
+				response => {
+				this.korisnici = response.data
+				})
+		}
+
+	},
+	mounted() {
+		this.id = this.$route.params.id
+		axios
+			.get('rest/korisnik/svikorisnici')
+			.then(
+				response => {
+				this.korisnici = response.data
+				return axios.post('rest/korisnik/ulogovan');
+				})
+			.then(response => 
+			{
+				this.korisnik=response.data;
+				if(this.korisnik)
+					this.ulogovan=true;
+				else
+					this.ulogovan=false;
+					
+				return axios.get('rest/kupac/svikupci')
+			}).then(response => {
+				this.kupci = response.data
+				})
+	}
+});

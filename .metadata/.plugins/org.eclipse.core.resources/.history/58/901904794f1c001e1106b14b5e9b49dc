@@ -1,0 +1,265 @@
+Vue.component("pregledKorpe", {
+	data: function () {
+		return {		
+			ulogovan: null,
+			korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+			
+			vozila: {},
+			kolicine: {},
+			objekti: {},
+			ukupnaCena: 0,
+			porudzbina: {id: null, vozila: [], objekti: [], datumIznajmljivanja: null, trajanjeNajma: null, cena: null, kupac: null, status: null}
+		}
+	},
+	template: ` 
+ 	<div class="pozadina">
+ 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" v-bind:href="'/WebShopREST/#/'">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="navbar-nav">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/iznajmljivanjeVozila'" class="nav-link">Iznamji</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korisnik.korisnickoIme" class="nav-link" v-if="ulogovan">Profil</a></li>
+                        </ul>
+                        
+                        <ul class="navbar-nav navbar-right">
+                            <li><a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Uloguj se</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/registracija'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Registuj se</a></li>
+                        </ul>
+                    </div>
+                </nav>
+		<br><br><br>	 
+		
+		<table class="styled-table">
+			<thead>
+				<tr>
+					<th class="centralnoPoravnanje logoTd">Slika</th>
+					<th class="centralnoPoravnanje">Marka</th>
+					<th class="centralnoPoravnanje">Model</th>
+					<th class="centralnoPoravnanje">Cena</th>
+					<th class="centralnoPoravnanje">Količina</th>
+					<th class="centralnoPoravnanje">Izbaci</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(v, index) in vozila">
+					<td class="logoTd">
+						<div class="imageDiv">
+							<img v-bind:src = "v.slika" class="imageClass"/>
+						</div>
+					</td>
+					<td>{{v.marka}}</td>
+					<td>{{v.model}}</td>
+					<td class="centralnoPoravnanje">{{v.cena}}</td>
+					<td>
+						<div class="row">
+							<div class="col-sm-4">
+								<button type="submit" v-on:click="oduzmi(index)" class="btn float-end btnSearch btnKolicina">-</button>
+							</div>
+							<div class="col-sm-4">
+								<p class="centralnoPoravnanje">{{kolicine[index]}}</p>
+							</div>
+							<div class="col-sm-4">
+								<button type="submit" v-on:click="dodaj(index)" class="btn float-end btnSearch btnKolicina">+</button>
+							</div>
+						</div>
+					</td>
+					<td><button type="submit" v-on:click="izbaciIzListe(v.id)" class="btn btnSearch btnKolicina"><i class="fa fa-trash-o"></i></button></td>
+				</tr>
+				<tr class="poslednjiRed">
+					<td>Ukupna cena</td>
+					<td></td>
+					<td></td>
+					<td>= {{ukupnaCena}}</td>
+					<td colspan="2"><button type="submit" v-on:click="napraviPorudzbinu" class="btn btnSearch">Poruči</button></td>
+				</tr>
+			</tbody>
+		</table><br><br>
+		
+		<footer class="text-center text-lg-start text-white d-flex flex-column">
+		    <section class="d-flex justify-content-between p-4 footerSocijalneMreze">
+		      <div class="me-5">
+		        <span>Posetite nas i na društvenim mrežma:</span>
+		      </div>
+		      
+		      <div>
+		        <a href="https://www.facebook.com/" class="text-white me-4">
+		          <i class="fa fa-facebook"></i>
+		        </a>
+		        <a href="https://www.twitter.com/" class="text-white me-4">
+		          <i class="fa fa-twitter"></i>
+		        </a>
+		        <a href="https://www.google.com/" class="text-white me-4">
+		          <i class="fa fa-google"></i>
+		        </a>
+		        <a href="https://www.instagram.com/" class="text-white me-4">
+		          <i class="fa fa-instagram"></i>
+		        </a>
+		        <a href="https://www.linkedin.com/" class="text-white me-4">
+		          <i class="fa fa-linkedin"></i>
+		        </a>
+		        <a href="https://www.pinterest.com/" class="text-white me-4">
+		          <i class="fa fa-pinterest"></i>
+		        </a>
+		      </div>
+		    </section>
+		
+		    <section class="">
+		      <div class="container text-center text-md-start mt-5">
+		        <div class="row mt-3">
+		          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+		            <h6 class="text-uppercase fw-bold">Rent A Car - F1 edition</h6>
+		            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+		            <p>
+		              Rent A Car - F1 edition je sajt sa željom da pomogne i ponudi 
+		              vozila koja će učiniti da se osećate kao da ste
+		              pravi vozač F1.
+		            </p>
+		          </div>
+		
+		          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+		            <h6 class="text-uppercase fw-bold">Vozila</h6>
+		            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+		            <p class="text-white">
+		            	Automobil
+		            </p>
+		            <p class="text-white">
+		            	Kombi
+		            </p>
+		            <p class="text-white">
+		            	Mobilehome
+		            </p>
+		          </div>
+		
+		          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+		            <h6 class="text-uppercase fw-bold">Korisni linkovi</h6>
+		            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+		            <p>
+		              <a v-bind:href="'/WebShopREST/#/'" class="text-white">Rent a car objekti</a>
+		            </p>
+		            <p>
+		              <a v-bind:href="'/WebShopREST/#/profil/'" class="text-white">Profil</a>
+		            </p>
+		            <p>
+		              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+		            </p>
+		            <p>
+		              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+		            </p>
+		          </div>
+		
+		          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+		            <!-- Links -->
+		            <h6 class="text-uppercase fw-bold">Kontakt</h6>
+		            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+		            <p><i class="fa fa-home mr-3"></i> Novi Sad, Srbija</p>
+		            <p><i class="fa fa-envelope mr-3"></i> najjaciTim@gmail.com</p>
+		            <p><i class="fa fa-phone mr-3"></i> +381 61 234 5678</p>
+		            <p><i class="fa fa-print mr-3"></i> +381 61 234 5678</p>
+		          </div>
+		        </div>
+		      </div>
+		    </section>
+		  </footer>
+	</div>
+	`
+	,
+	methods: {
+		izbaciIzListe : function(id){
+			for(let i = 0; i < this.vozila.length; i++){
+				if(this.vozila[i].id === id){
+					this.ukupnaCena -= this.vozila[i].cena;
+					this.vozila.splice(i, 1)
+					break;
+				}
+			}
+		},
+		
+		dodaj : function(index){
+			this.$set(this.kolicine, index, this.kolicine[index] + 1);
+			this.ukupnaCena += this.vozila[index].cena
+		},
+		
+		oduzmi : function(index){
+			if(this.kolicine[index] === 1){
+				alert("Ne mozete vise smanjivati kolicinu");
+			}
+			else{
+				this.$set(this.kolicine, index, this.kolicine[index] - 1);
+				this.ukupnaCena -= this.vozila[index].cena
+			}
+		},
+		
+		napraviPorudzbinu : function(){	
+			var j = 0;		
+			for(let i = 0; i < this.vozila.length; i++){
+				var br = this.kolicine[i]
+				while(br > 0){
+					this.porudzbina.vozila[j++] = this.vozila[i];
+					br--;
+				}
+				
+			}
+			this.porudzbina.datumIznajmljivanja = this.$route.params.pocetniDatum;
+			
+			var pocetniDatum = new Date(this.$route.params.pocetniDatum)
+			var krajnjiDatum = new Date(this.$route.params.krajnjiDatum)
+			
+			this.porudzbina.trajanjeNajma = krajnjiDatum.getDate() - pocetniDatum.getDate()
+			
+			this.porudzbina.cena = this.ukupnaCena;
+			this.porudzbina.kupac = "Kupac Kupac";
+			this.porudzbina.status = "obrada";
+			
+			var sviId = ""
+			for(let i = 0; i < this.vozila.length; i++){
+				if(i != this.vozila.length - 1)
+					sviId += this.vozila[i].id + ",";
+				else
+					sviId += this.vozila[i].id;
+			}
+			
+			axios
+				.get('rest/vozilo/dobaviObjekte/' + sviId)
+				.then(response => {			
+					return axios
+						.get('rest/rentACarObjekat/dobaviZaSvakiId/' + response.data)
+				})
+				.then(response => {
+					this.porudzbina.objekti = response.data;
+							
+					return axios
+							.post('rest/porudzbina/dodaj', this.porudzbina)
+				})		
+				.then(
+					alert("Uspesno dodato")
+				)
+			
+		}
+	},
+	mounted() {
+		axios.post('rest/korisnik/ulogovan')
+			.then(response => {
+				this.korisnik=response.data;
+				
+				if(this.korisnik)
+					this.ulogovan=true;
+				else
+					this.ulogovan=false;
+					
+				return axios.get('rest/vozilo/dobaviVozila/' + this.$route.params.listaId)
+			})
+			.then(response =>
+			{
+				this.vozila = response.data;
+				
+				this.kolicine = Array(this.vozila.length).fill(1);
+				
+				for(let i = 0; i < this.vozila.length; i++){
+					this.ukupnaCena += this.vozila[i].cena;
+				}
+			})
+	}
+});

@@ -1,0 +1,11 @@
+.pozadina1{
+	background-color: #F2F5DA; 
+}
+
+.red{
+	border: 2px solid red;
+}
+
+.invalidInputs{
+	color: red;
+}

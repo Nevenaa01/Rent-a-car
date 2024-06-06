@@ -1,0 +1,12 @@
+package dto;
+
+import model.Komentar.Status;
+
+public class KomentarKorisnikDTO {
+	private Integer id;
+	private String imePrezimeKorisnika;
+	private Integer idObjekta;
+	private String komentar;
+	private Integer ocena;
+	private Status status;
+}

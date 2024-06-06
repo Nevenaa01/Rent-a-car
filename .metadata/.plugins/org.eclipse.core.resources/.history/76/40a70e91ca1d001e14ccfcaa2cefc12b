@@ -1,0 +1,56 @@
+package services;
+
+import java.util.ArrayList;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import dao.KomentarDAO;
+import dto.KomentarKorisnikDTO;
+import model.Komentar;
+
+@Path("/komentar")
+public class KomentarService {
+	@Context
+	ServletContext ctx;
+
+	public KomentarService() {}
+
+	@PostConstruct
+	public void init() {
+		if (ctx.getAttribute("komentarDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("komentarDAO", new KomentarDAO(contextPath));
+		}
+	}
+	
+	@POST
+	@Path("/dodaj")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void dodaj(Komentar komentar) {
+		KomentarDAO komentarDAO = (KomentarDAO) ctx.getAttribute("komentarDAO");
+		
+		komentarDAO.dodaj(komentar);
+	}
+	
+	@GET
+	@Path("/dobaviKomentareNaCekanjuZaObjekat/{idObjekta}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<KomentarKorisnikDTO> dobaviKomentareNaCekanjuZaObjekat(@PathParam("idObjekta") Integer idObjekta){
+		KomentarDAO komentarDAO = (KomentarDAO) ctx.getAttribute("komentarDAO");
+		
+		ArrayList<KomentarKorisnikDTO> komentarKorisnikDTO = new ArrayList<KomentarKorisnikDTO>();
+		ArrayList<Komentar> komentari = komentarDAO.dobaviKomentareNaCekanjuZaObjekat(idObjekta);
+		
+		for()
+		return null;
+	}
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "idKupca": 9,
+    "idObjekta": 2,
+    "komentar": "komentar",
+    "ocena": 1
+  },
+  {
+    "id": "2",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "gf",
+    "ocena": 2
+  },
+  {
+    "id": "3",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "gf",
+    "ocena": 2
+  },
+  {
+    "id": "4",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "sdadsadas",
+    "ocena": 2
+  }
+]

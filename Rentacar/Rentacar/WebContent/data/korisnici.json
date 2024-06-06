@@ -1,0 +1,231 @@
+[
+  {
+    "id": "1",
+    "korisnickoIme": "remacar",
+    "lozinka": "123",
+    "ime": "Marinko",
+    "prezime": "Selimovic",
+    "pol": "Muski",
+    "datumRodjenja": "2022-11-29",
+    "uloga": "Kupac",
+    "blokiran": "ne"
+  },
+  {
+    "id": "2",
+    "korisnickoIme": "josKorisnickogImena",
+    "lozinka": "josSifre",
+    "ime": "josImena",
+    "prezime": "josPrezimena",
+    "pol": "Zenski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Kupac",
+    "blokiran": "ne"
+  },
+  {
+    "id": "3",
+    "korisnickoIme": "sadsa",
+    "lozinka": "aaa",
+    "ime": "asdsa",
+    "prezime": "dsada",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-01",
+    "uloga": "Kupac",
+    "blokiran": "da"
+  },
+  {
+    "id": "4",
+    "korisnickoIme": "sdadsa",
+    "lozinka": "aa",
+    "ime": "dsadsa",
+    "prezime": "dsadsa",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-01",
+    "uloga": "Kupac",
+    "blokiran": "da"
+  },
+  {
+    "id": "5",
+    "korisnickoIme": "vdsv",
+    "lozinka": "asdf",
+    "ime": "fasdf",
+    "prezime": "dfafda",
+    "pol": "Zenski",
+    "datumRodjenja": "2023-05-29",
+    "uloga": "Kupac",
+    "blokiran": "da"
+  },
+  {
+    "id": "6",
+    "korisnickoIme": "asdfsadfsa",
+    "lozinka": "aa",
+    "ime": "asdf",
+    "prezime": "asd",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-31",
+    "uloga": "Kupac",
+    "blokiran": "ne"
+  },
+  {
+    "id": "7",
+    "korisnickoIme": "marko123",
+    "lozinka": "aa",
+    "ime": "asdf",
+    "prezime": "affdas",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Administrator",
+    "blokiran": "ne"
+  },
+  {
+    "id": "8",
+    "korisnickoIme": "fafdasfada",
+    "lozinka": "a",
+    "ime": "adsf",
+    "prezime": "afds",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-31",
+    "uloga": "Kupac",
+    "blokiran": "da"
+  },
+  {
+    "id": "9",
+    "korisnickoIme": "marko",
+    "lozinka": "marko",
+    "ime": "marko",
+    "prezime": "marko",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Kupac",
+    "blokiran": "da"
+  },
+  {
+    "id": "10",
+    "korisnickoIme": "nekoIme",
+    "lozinka": "a",
+    "ime": "dsads",
+    "prezime": "dsadsa",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "11",
+    "korisnickoIme": "Petar01",
+    "lozinka": "pera",
+    "ime": "Petar",
+    "prezime": "Peric",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "12",
+    "korisnickoIme": "Petar001",
+    "lozinka": "a",
+    "ime": "a",
+    "prezime": "a",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Kupac",
+    "blokiran": "ne"
+  },
+  {
+    "id": "13",
+    "korisnickoIme": "brzakoza",
+    "lozinka": "koza",
+    "ime": "Mihajlo",
+    "prezime": "Kova?",
+    "pol": "Muski",
+    "datumRodjenja": "2022-03-09",
+    "uloga": "Kupac",
+    "blokiran": "ne"
+  },
+  {
+    "id": "14",
+    "korisnickoIme": "mixa",
+    "lozinka": "111",
+    "ime": "Mihajlo",
+    "prezime": "Markovic",
+    "pol": "Muski",
+    "datumRodjenja": "2022-12-13",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "15",
+    "korisnickoIme": "branko",
+    "lozinka": "222",
+    "ime": "Branko",
+    "prezime": "Nikovic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-28",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "16",
+    "korisnickoIme": "panda",
+    "lozinka": "123",
+    "ime": "Jovana",
+    "prezime": "Koricanac",
+    "pol": "Zenski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "17",
+    "korisnickoIme": "nikola",
+    "lozinka": "ss",
+    "ime": "Nikola",
+    "prezime": "Maric",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-25",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "18",
+    "korisnickoIme": "simona",
+    "lozinka": "123",
+    "ime": "Simona",
+    "prezime": "Simanic",
+    "pol": "Zenski",
+    "datumRodjenja": "2022-12-13",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "19",
+    "korisnickoIme": "nixa",
+    "lozinka": "123",
+    "ime": "Niksa",
+    "prezime": "Zizu",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-28",
+    "uloga": "Menadzer",
+    "blokiran": "ne"
+  },
+  {
+    "id": "20",
+    "korisnickoIme": "milos",
+    "lozinka": "123",
+    "ime": "Milos",
+    "prezime": "Milosevic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-04-12",
+    "uloga": "Menadzer"
+  },
+  {
+    "id": "21",
+    "korisnickoIme": "menader",
+    "lozinka": "123",
+    "ime": "Marko",
+    "prezime": "Markovic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-07-04",
+    "uloga": "Menadzer"
+  }
+]

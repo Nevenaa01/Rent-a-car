@@ -1,0 +1,237 @@
+package dao;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import model.Korisnik;
+
+public class KorisnikDAO {
+	private Map<Integer, Korisnik> korisnici = new HashMap();
+	private String csvFilePath;
+
+	public KorisnikDAO() {}
+
+	public KorisnikDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\korisnici.json");
+
+		ucitajKorisnike();
+	}
+
+	private void ucitajKorisnike() {
+		try
+    	{
+			FileReader fileReader = new FileReader(this.csvFilePath);
+			Gson gson = new Gson();
+			Korisnik[] korisniciNiz = gson.fromJson(fileReader, Korisnik[].class);
+
+			if(korisniciNiz ==  null) {
+				return;
+			}
+
+			for(Korisnik korisnik : korisniciNiz) {
+				korisnici.put(korisnik.getId(), korisnik);
+			}
+
+			fileReader.close();
+    	} catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
+    	}
+	}
+
+	public void dodajKorisnika(Korisnik korisnik) {
+		korisnik.setId(napraviID());
+		korisnici.put(korisnik.getId(), korisnik);
+		upisi();
+	}
+
+	public void upisi() {
+		try
+    	{
+    		FileWriter fileWriter = new FileWriter(this.csvFilePath);
+    		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    		JsonArray jsonArray = new JsonArray();
+
+    		for (Korisnik korisnik : korisnici.values()){
+    			jsonArray.add(napraviJSON(korisnik));
+    		}
+
+    		String jsonString = gson.toJson(jsonArray);
+    		fileWriter.write(jsonString);
+
+    		fileWriter.close();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Greska pri upisu");
+    	}
+	}
+
+	private Integer napraviID() {
+		try {
+			return korisnici.size() == 0 ? 1 : korisnici.keySet().stream().mapToInt(v -> v).max().orElseThrow() + 1;
+		}
+		catch(Exception e) {
+			System.out.println("Id se ne moze napraviti");
+			return null;
+		}
+	}
+
+	private JsonObject napraviJSON(Korisnik korisnik) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", korisnik.getId().toString());
+		jsonObject.addProperty("korisnickoIme", korisnik.getKorisnickoIme());
+		jsonObject.addProperty("lozinka", korisnik.getLozinka());
+		jsonObject.addProperty("ime", korisnik.getIme());
+		jsonObject.addProperty("prezime", korisnik.getPrezime());
+		jsonObject.addProperty("pol", korisnik.getPol());
+		jsonObject.addProperty("datumRodjenja", korisnik.getDatumRodjenja());
+		jsonObject.addProperty("uloga", korisnik.getUloga());
+		return jsonObject;
+	}
+
+	public boolean validanKorisnik(Korisnik korisnik) {
+		return !korisnici.values().stream().filter(k -> k.getKorisnickoIme().equals(korisnik.getKorisnickoIme())).findFirst().isPresent();
+	}
+
+	public Korisnik find(Integer id, String lozinka) {
+        if (!korisnici.containsKey(id)) {
+            return null;
+        }
+        Korisnik korisnik = korisnici.get(id);
+        if (!korisnik.getLozinka().equals(lozinka)) {
+            return null;
+        }
+        return korisnik;
+    }
+
+	public Korisnik findByID(Integer id) {
+        if (!korisnici.containsKey(id)) {
+            return null;
+        }
+        Korisnik korisnik = korisnici.get(id);
+
+        return korisnik;
+    }
+
+	public Korisnik findByKorIme(String korIme) {
+
+        Korisnik korisnik = new Korisnik();
+        for (Korisnik kor : this.korisnici.values()) {
+			if(kor.getKorisnickoIme().equals(korIme))
+				korisnik=kor;
+		}
+        return korisnik;
+    }
+
+	public boolean izmeniKorisnika(Korisnik korisnik)
+	{
+		Korisnik stari=findByID(korisnik.getId());
+		if(!korisnik.getKorisnickoIme().equals(stari.getKorisnickoIme()))
+			if(!proveriKorisnickoIme(korisnik.getKorisnickoIme()))
+				return false;
+		stari.setIme(korisnik.getIme());
+		stari.setPrezime(korisnik.getPrezime());
+		stari.setKorisnickoIme(korisnik.getKorisnickoIme());
+		stari.setLozinka(korisnik.getLozinka());
+		stari.setPolString(korisnik.getPol());
+		stari.setDatumRodjenja(korisnik.getDatumRodjenja());
+		upisi();
+		return true;
+	}
+
+	public boolean proveriKorisnickoIme(String korIme)
+	{
+		for (Korisnik korisnik : this.korisnici.values()) {
+			if(korisnik.getKorisnickoIme().equals(korIme))
+				return false;
+		}
+		return true;
+	}
+
+	public Korisnik ulogujSe(String korIme, String lozinka)
+	{
+		for (Korisnik korisnik :  this.korisnici.values()) {
+			if(korisnik.getKorisnickoIme().equals(korIme)&& korisnik.getLozinka().equals(lozinka))
+				return korisnik;
+		}
+		return null;
+	}
+	public ArrayList<Korisnik> PrikaziSve() {
+		return new ArrayList<>(this.korisnici.values());
+	}
+
+	public ArrayList<Korisnik> sort(String parametar,boolean rastuciRedosled)
+	{
+			if(parametar.equals("korIme")) {
+
+				if(rastuciRedosled)
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat1.getKorisnickoIme().toLowerCase().compareTo(objekat2.getKorisnickoIme().toLowerCase()))
+								.collect(Collectors.toList()));
+				else
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat2.getKorisnickoIme().toLowerCase().compareTo(objekat1.getKorisnickoIme().toLowerCase()))
+								.collect(Collectors.toList()));
+			}
+			else if(parametar.equals("ime")) {
+
+				if(rastuciRedosled)
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat1.getIme().toLowerCase().compareTo(objekat2.getIme().toLowerCase()))
+							.collect(Collectors.toList()));
+				else
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat2.getIme().toLowerCase().compareTo(objekat1.getIme().toLowerCase()))
+							.collect(Collectors.toList()));
+			}
+			else {
+
+				if(rastuciRedosled)
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat1.getPrezime().toLowerCase().compareTo(objekat2.getPrezime().toLowerCase()))
+							.collect(Collectors.toList()));
+				else
+					return new ArrayList(korisnici.values()
+							.stream().sorted((objekat1, objekat2) -> objekat2.getPrezime().toLowerCase().compareTo(objekat1.getPrezime().toLowerCase()))
+							.collect(Collectors.toList()));
+			}
+
+	}
+
+	public ArrayList<Korisnik> Filter(String param)
+	{
+		ArrayList<Korisnik> filtrirani=new ArrayList<>();
+		for (Korisnik korisnik : this.korisnici.values()) {
+			if(korisnik.getUloga().equals(param)||param.endsWith("defaultna"))
+				filtrirani.add(korisnik);
+		}
+		return filtrirani;
+	}
+
+	public ArrayList<Korisnik> Ucitaj()
+	{
+		return new ArrayList<>(korisnici.values());
+	}
+
+	public ArrayList<Korisnik> Pretrazi(String korIme, String ime,String prezime)
+	{
+			ArrayList<Korisnik> pretrazeni=Ucitaj();
+			if(!korIme.equals("defaultno"))
+				pretrazeni=new ArrayList<>(pretrazeni.stream().filter(k->k.getKorisnickoIme().toLowerCase().contains(korIme)).toList());
+			if(!ime.equals("defaultno"))
+				pretrazeni=new ArrayList<>(pretrazeni.stream().filter(k->k.getIme().toLowerCase().contains(ime)).toList());
+			if(!prezime.equals("defaultno"))
+				pretrazeni=new ArrayList<>(pretrazeni.stream().filter(k->k.getPrezime().toLowerCase().contains(prezime)).toList());
+			return pretrazeni;
+	}
+}

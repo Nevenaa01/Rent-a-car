@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1",
+    "duzina": 448167.0,
+    "sirina": 204667.0,
+    "adresa": "Main Street,1,Belgrade,11000"
+  },
+  {
+    "id": "2",
+    "duzina": 452671.0,
+    "sirina": 198335.0,
+    "adresa": "First Avenue,25,Novi Sad,21000"
+  },
+  {
+    "id": "3",
+    "duzina": 433194.0,
+    "sirina": 218963.0,
+    "adresa": "Center Street,10,Niš,18000"
+  },
+  {
+    "id": "4",
+    "duzina": 424392.0,
+    "sirina": 192661.0,
+    "adresa": "Mountain View Road,5,Kotor,85330"
+  },
+  {
+    "id": "5",
+    "duzina": 440245.0,
+    "sirina": 209157.0,
+    "adresa": "Old Town Lane,7,ÄŒaÄ�ak,32000"
+  },
+  {
+    "id": "6",
+    "duzina": 433209.0,
+    "sirina": 218958.0,
+    "adresa": "Second Avenue,12,NiÅ¡,18000"
+  },
+  {
+    "id": "7",
+    "duzina": 452562.0,
+    "sirina": 198451.0,
+    "adresa": "Park Street,8,Novi Sad,21000"
+  },
+  {
+    "id": "8",
+    "duzina": 21.0059,
+    "sirina": 44.0165,
+    "adresa": "Riverside Drive,33,Å abac,15000"
+  },
+  {
+    "id": "9",
+    "duzina": 440155.0,
+    "sirina": 209158.0,
+    "adresa": "Market Square,15,Ča�?ak,32000"
+  },
+  {
+    "id": "10",
+    "duzina": 447983.0,
+    "sirina": 204644.0,
+    "adresa": "Freedom Street,4,Belgrade,11000"
+  },
+  {
+    "id": "11",
+    "duzina": 44.684,
+    "sirina": 20.041,
+    "adresa": "Marka Markovica,37,Novi Sad,2100"
+  },
+  {
+    "id": "12",
+    "duzina": 20.714331357315817,
+    "sirina": 43.725353999999996,
+    "adresa": "??????????,180,Kraljevo City,36101,180,Kraljevo City,36101"
+  },
+  {
+    "id": "13",
+    "duzina": 19.764306358237164,
+    "sirina": 45.24246195,
+    "adresa": "Rodina,37,Novi Sad City,21203,37,Novi Sad City,21203"
+  }
+]

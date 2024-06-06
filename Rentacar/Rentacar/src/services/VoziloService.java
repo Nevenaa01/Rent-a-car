@@ -1,0 +1,155 @@
+package services;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import dao.PorudzbinaDAO;
+import dao.VoziloDAO;
+import model.Porudzbina;
+import model.Vozilo;
+
+@Path("/vozilo")
+public class VoziloService {
+	@Context
+	ServletContext ctx;
+	@Context
+	HttpServletRequest request;
+
+	public VoziloService() {}
+
+	@PostConstruct
+	public void init() {
+		if (ctx.getAttribute("voziloDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("voziloDAO", new VoziloDAO(contextPath));
+		}
+		if(ctx.getAttribute("porudzbinaDAO") == null){
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("porudzbinaDAO", new PorudzbinaDAO(contextPath));
+		}
+	}
+	@PUT
+	@Path("/izmeni")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean Izmeni(Vozilo vozilo) {
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		return voziloDAO.Izmeni(vozilo);
+	}
+
+	@POST
+	@Path("/kreiraj")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean Kreiraj(Vozilo vozilo)
+	{
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		return voziloDAO.Kreiraj(vozilo);
+	}
+
+	@GET
+	@Path("/dobaviSlobodne/{pocetniDatum}/{krajnjiDatum}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Vozilo> dobaviSlobodne(@PathParam("pocetniDatum") String pocetniDatum, @PathParam("krajnjiDatum") String krajnjiDatum){
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		PorudzbinaDAO porudzbinaDAO = (PorudzbinaDAO) ctx.getAttribute("porudzbinaDAO");
+
+		LocalDate pocetni = LocalDate.of(Integer.parseInt(pocetniDatum.split("-")[0]),
+				Integer.parseInt(pocetniDatum.split("-")[1]),
+				Integer.parseInt(pocetniDatum.split("-")[2]));
+
+		LocalDate krajnji = LocalDate.of(Integer.parseInt(krajnjiDatum.split("-")[0]),
+				Integer.parseInt(krajnjiDatum.split("-")[1]),
+				Integer.parseInt(krajnjiDatum.split("-")[2]));
+
+		ArrayList<Vozilo> slobodnaVozila = voziloDAO.dobaviSlobodne();
+		ArrayList<Vozilo> dostupnaVozila = new ArrayList<>();
+
+		for(Vozilo vozilo : slobodnaVozila) {
+			ArrayList<Porudzbina> porudzbineVozila = porudzbinaDAO.dobaviPoIdVozila(vozilo.getId());
+
+			if(porudzbineVozila.size() == 0) {
+				dostupnaVozila.add(vozilo);
+				continue;
+			}
+
+			for(Porudzbina porudzbina : porudzbineVozila) {
+				LocalDate pocetniDatumPorudzbine = porudzbina.getDatumIznajmljivanja().toLocalDate();
+				LocalDate krajnjiDatumPorudzbine = pocetniDatumPorudzbine.plusDays(porudzbina.getTrajanjeNajma());
+
+				boolean preklapanjeSaLeve = pocetni.isBefore(pocetniDatumPorudzbine) && krajnji.isBefore(krajnjiDatumPorudzbine);
+				boolean celokupnoURezervisanom = pocetniDatumPorudzbine.isBefore(pocetni) && krajnjiDatumPorudzbine.isAfter(krajnji);
+				boolean preklapanjeSaDesne = pocetni.isBefore(krajnjiDatumPorudzbine) && krajnjiDatumPorudzbine.isBefore(krajnji);
+				boolean rezervisaniCelokupnoUTrazenom = pocetni.isBefore(pocetniDatumPorudzbine) && krajnjiDatumPorudzbine.isBefore(krajnji);
+
+				if(!(preklapanjeSaLeve || celokupnoURezervisanom || preklapanjeSaDesne || rezervisaniCelokupnoUTrazenom))
+					dostupnaVozila.add(vozilo);
+			}
+		}
+
+		return dostupnaVozila;
+	}
+
+	@GET
+	@Path("/dobaviVozila/{sviId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Vozilo> dobaviPoIdVozila(@PathParam("sviId") String sviId) {
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+
+		return voziloDAO.dobaviPoIdVozila(sviId);
+	}
+
+	@GET
+	@Path("/obrisiizobjekta/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean ObrisiVozilo(@PathParam("id")Integer voziloId) {
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		return voziloDAO.Obrisi(voziloId);
+	}
+
+	@GET
+	@Path("/dobaviObjekte/{sviId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Integer> dobaviObjekte(@PathParam("sviId") String sviId){
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+
+		return voziloDAO.dobaviObjekte(sviId);
+	}
+	
+	@PUT
+	@Path("/zauzeto/{porudzbinaId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void Preuzmi(@PathParam("porudzbinaId") String id) 
+	{
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		PorudzbinaDAO porudzbinaDAO = (PorudzbinaDAO) ctx.getAttribute("porudzbinaDAO");
+		
+		Porudzbina p=porudzbinaDAO.DobaviPoId(id);
+		voziloDAO.Zauzeto(p);
+	}
+	
+	@PUT
+	@Path("/oslobodjeno/{porudzbinaId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void Vrati(@PathParam("porudzbinaId") String id) 
+	{
+		VoziloDAO voziloDAO = (VoziloDAO) ctx.getAttribute("voziloDAO");
+		PorudzbinaDAO porudzbinaDAO = (PorudzbinaDAO) ctx.getAttribute("porudzbinaDAO");
+		
+		Porudzbina p=porudzbinaDAO.DobaviPoId(id);
+		voziloDAO.Vraceno(p);
+	}
+}

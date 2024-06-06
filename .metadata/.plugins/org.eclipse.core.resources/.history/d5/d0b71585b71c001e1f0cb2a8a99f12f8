@@ -1,0 +1,332 @@
+[
+  {
+    "id": "McSHp4p0iy",
+    "vozila": [
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "14",
+        "marka": "opel",
+        "model": "Astra",
+        "cena": 87000.0,
+        "tip": "kombi",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.7,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSn6xcluuHc8xcC6391h_aWKAkSyZJA08mhfw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 287000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  },
+  {
+    "id": "yUFMWMMsHs",
+    "vozila": [
+      {
+        "id": "23",
+        "marka": "renault",
+        "model": "Clio",
+        "cena": 78000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 5.9,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcT_QG0mCpxaPdC9b6qMuxpoGVrUBUItmvzxlQ\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 78000.0,
+    "kupac": "Kupac Kupac",
+    "status": "obrada"
+  },
+  {
+    "id": "cZartwxWld",
+    "vozila": [
+      {
+        "id": "13",
+        "marka": "renault",
+        "model": "Megane",
+        "cena": 92000.0,
+        "tip": "auto",
+        "vrsta": "automatik",
+        "tipGoriva": "dizel",
+        "potrosnja": 5.8,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSxpMQ0UjuN63hb9KkHPO4Cdvr0Ea_KnucCbw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 92000.0,
+    "kupac": "Kupac Kupac",
+    "status": "obrada"
+  },
+  {
+    "id": "YJZVos8rfG",
+    "vozila": [
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "14",
+        "marka": "opel",
+        "model": "Astra",
+        "cena": 87000.0,
+        "tip": "kombi",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.7,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSn6xcluuHc8xcC6391h_aWKAkSyZJA08mhfw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 287000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  },
+  {
+    "id": "1SfSWKWBYh",
+    "vozila": [
+      {
+        "id": "13",
+        "marka": "renault",
+        "model": "Megane",
+        "cena": 92000.0,
+        "tip": "auto",
+        "vrsta": "automatik",
+        "tipGoriva": "dizel",
+        "potrosnja": 5.8,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSxpMQ0UjuN63hb9KkHPO4Cdvr0Ea_KnucCbw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 92000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  },
+  {
+    "id": "st0M0L7iqw",
+    "vozila": [
+      {
+        "id": "23",
+        "marka": "renault",
+        "model": "Clio",
+        "cena": 78000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 5.9,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcT_QG0mCpxaPdC9b6qMuxpoGVrUBUItmvzxlQ\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 78000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  },
+  {
+    "id": "LcTxxPbjvB",
+    "vozila": [
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "1",
+        "marka": "audi",
+        "model": "A6",
+        "cena": 100000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.2,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://www.b92.net/news/pics/2022/10/07/984481299634010bcc7854086020221_orig.jpg",
+        "status": "dostupno"
+      },
+      {
+        "id": "14",
+        "marka": "opel",
+        "model": "Astra",
+        "cena": 87000.0,
+        "tip": "kombi",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 6.7,
+        "brojVrata": 4,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSn6xcluuHc8xcC6391h_aWKAkSyZJA08mhfw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 287000.0,
+    "kupac": "Kupac Kupac",
+    "status": "obrada"
+  },
+  {
+    "id": "aB2E7jCt16",
+    "vozila": [
+      {
+        "id": "13",
+        "marka": "renault",
+        "model": "Megane",
+        "cena": 92000.0,
+        "tip": "auto",
+        "vrsta": "automatik",
+        "tipGoriva": "dizel",
+        "potrosnja": 5.8,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcSxpMQ0UjuN63hb9KkHPO4Cdvr0Ea_KnucCbw\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 92000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  },
+  {
+    "id": "vWG6DGIRWU",
+    "vozila": [
+      {
+        "id": "23",
+        "marka": "renault",
+        "model": "Clio",
+        "cena": 78000.0,
+        "tip": "auto",
+        "vrsta": "manuelni",
+        "tipGoriva": "benzin",
+        "potrosnja": 5.9,
+        "brojVrata": 5,
+        "brojOsoba": 5,
+        "opis": "opis",
+        "slika": "https://encrypted-tbn0.gstatic.com/images?q\u003dtbn:ANd9GcT_QG0mCpxaPdC9b6qMuxpoGVrUBUItmvzxlQ\u0026usqp\u003dCAU",
+        "status": "dostupno"
+      }
+    ],
+    "objekat": {},
+    "datumIznajmljivanja": "2023-07-01T12:00",
+    "trajanjeNajma": 24,
+    "cena": 78000.0,
+    "kupac": "Marinko Selimovic",
+    "korisnickoImeKupca": "remacar",
+    "status": "obrada"
+  }
+]

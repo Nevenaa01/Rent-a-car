@@ -1,0 +1,238 @@
+Vue.component("PrikazKorisnika", {
+	data: function () {
+		    return {
+		     korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+		     korIme:"",
+		     ulogovan:null,
+		     admin:null,
+		     menadzer:null,
+		     kupac:null,
+		     objekatId:null,
+		     map: null
+		    }
+	},
+	template: ` 
+	<div>
+	<link rel="stylesheet" href="profile.css">
+		<div v-if="this.ulogovan">
+	      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" v-bind:href="'/WebShopREST/#/'">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="navbar-nav">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/iznajmljivanjeVozila'" v-if="kupac" class="nav-link">Iznamji</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korisnik.korisnickoIme" class="nav-link" v-if="ulogovan">Profil</a></li>
+                        </ul>
+                        
+                        <ul class="navbar-nav navbar-right">
+                            <li><a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Uloguj se</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/registracija'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Registuj se</a></li>
+                        </ul>
+                    </div>
+                </nav>
+	    </div>
+	    	<div class="col-sm-12">
+                <label>Lokacija</label>
+                    <div class="input-group">
+						<div id="map" style="width: 100%; height: 400px;"></div>
+                    </div>
+            </div><br>
+	        <div class="col-sm-12"  v-if="this.ulogovan">
+	            <div class="d-flex justify-content-center align-items-center marginagornja">
+	                <img src="Img/profile.png" alt="Image" style="width:25%">
+	            </div>
+	        </div>
+	        
+	        <div class="col-sm-12 d-flex justify-content-center align-items-center marginagornja"  v-if="this.ulogovan">
+	            <div>
+	                <label class="velikiFont"><b>Korisnicko ime:</b> {{korisnik.korisnickoIme}}</label><br>
+	                <label class="velikiFont"><b>Uloga: </b>{{korisnik.uloga}}</label><br>
+	                <label class="velikiFont"><b>Ime: </b>{{korisnik.ime}}</label><br>
+	                <label class="velikiFont"><b>Prezime: </b>{{korisnik.prezime}}</label><br>
+	            </div>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.ulogovan">
+	                <button class="izmeniB velikiFont" value="Izmeni profil" v-on:click="izmeniKorisnika(korIme)">Izmeni profil</button>
+	        </div>
+	        <div v-if="!this.ulogovan">
+	        	<label>Nisi ulogovan!</label><br>
+	        	<a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link">Uloguj se</a></li>
+	        </div>
+	         <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.admin">
+	                <button class="izmeniB velikiFont" value="Kreiraj novi objekat" v-on:click="kreirajObjekat()">Kreiraj novi objekat</button>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.admin">
+	                <button class="izmeniB velikiFont" value="Vidi sve korisnike" v-on:click="sviKorisnici()">Vidi sve korisnike</button>
+	        </div>
+	        
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.menadzer">
+	                <button class="izmeniB velikiFont" value="Sva vozila" v-on:click="pregledObjekta(objekatId)">Pregled objekta</button>
+	        </div>
+	        
+	         
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.kupac">
+	                <button class="izmeniB velikiFont" v-on:click="prikazPorudzbinaKupac">Sve porudžbine</button>
+	        </div>
+	        
+	         <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.ulogovan">
+	                <button class="izmeniB velikiFont" value="Izmeni profil" v-on:click="izlogujSe()">Izloguj se</button>
+	        </div>
+	</div>
+	`,
+	mounted(){
+		
+		this.initializeMap();
+		
+		var view = new ol.View({
+          center: ol.proj.fromLonLat([21.0059, 44.0165]), 
+          zoom: 5, 
+        });
+        this.map.setView(view);
+		
+		var ovo=this;
+	  	this.map.on('click', function (evt) {
+  
+    	
+    	const coords_click = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+    	
+    	const lon = coords_click[0];
+    	const lat = coords_click[1];
+    	
+		const data_for_url = {lon: lon, lat: lat, format: "json", limit: 1};
+	    const encoded_data = Object.keys(data_for_url).map(function (k) {
+	        return encodeURIComponent(k) + '=' + encodeURIComponent(data_for_url[k])
+	    }).join('&');
+
+    	const url_nominatim = 'https://nominatim.openstreetmap.org/reverse?' + encoded_data;
+    	
+		const layer = new ol.layer.Vector({
+		source: new ol.source.Vector({
+    	features: [
+    	new ol.Feature({
+        	geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+    	})
+    	]
+		}),
+		style: new ol.style.Style({
+		    image: new ol.style.Icon({
+		    anchor: [0.5, 1],
+		    crossOrigin: 'anonymous',
+		    src: 'https://docs.maptiler.com/openlayers/default-marker/marker-icon.png',
+		    })
+		})
+		});
+		
+		const layerId = 'myLayer'; 
+      	const layerToRemove = ovo.map.getLayers().getArray().find(layer => layer.get('id') === layerId);
+
+      	if (layerToRemove) {
+        
+        	ovo.map.removeLayer(layerToRemove);
+      	}
+      	
+		layer.set('id', 'myLayer');
+		ovo.map.addLayer(layer);
+	
+
+    
+	    httpGet(url_nominatim, function (response_text) {   
+	        const data_json = JSON.parse(response_text);   
+	        const res_lon = data_json.lon;
+	        const res_lat = data_json.lat;
+	        const res_address = data_json.address;
+	        
+	        const address_display_name  = data_json.display_name;
+	        const address_postcode      = res_address.postcode;
+	        const address_city          = res_address.city;
+	        const address_house_number  = res_address.house_number;
+	        const address_road          = res_address.road;
+	        
+	        ovo.pretraga.lokacija.duzina = res_lon;
+	        ovo.pretraga.lokacija.sirina = res_lat;
+	        ovo.pretraga.lokacija.adresa = address_road + "," + address_house_number + "," + address_city + "," + address_postcode;
+	        
+	 
+	    });
+	});
+	
+		this.korIme=this.$route.params.korIme;
+		if((this.korIme==="")||!(this.korIme==="undefined"))
+		{
+			
+		axios.get("rest/korisnik/ucitaj/"+this.korIme)
+		.then(response => {
+		this.korisnik = response.data
+		this.ulogovan=true;
+		if(this.korisnik.uloga==="Administrator")
+							this.admin=true;
+						else
+							this.admin=false;
+		if(this.korisnik.uloga==="Menadzer")
+							this.menadzer=true;
+						else
+							this.menadzer=false;
+		if(this.korisnik.uloga === "Kupac")
+			this.kupac = true;
+		else
+			this.kupac = false;
+			
+		return axios.get("rest/menadzer/objekat/"+this.korIme)}).then(response=>
+		{
+			this.objekatId=response.data
+		});
+		
+		}
+		
+		
+	}
+	, 
+	methods : {
+		izmeniKorisnika: function(korIme){
+			event.preventDefault()
+			router.push(`/izmenaKorisnika/${korIme}`);
+		},
+		izlogujSe:function()
+		{
+			event.preventDefault()
+			axios.post('rest/korisnik/izlogujse');
+			router.push(`/`);
+		},
+		kreirajObjekat: function()
+		{
+			event.preventDefault()
+			router.push(`/kreiranjeobjekta/menadzer`);
+		},
+		
+		sviKorisnici: function()
+		{
+			event.preventDefault()
+			router.push(`/prikazsvihkorisnika`);
+		},
+		
+		prikazPorudzbinaKupac : function(){
+			router.push(`/prikazPorudzbina`)
+		},
+		
+		pregledObjekta : function(objId){
+			router.push(`/prikazMneadzerovogObjekta/${objId}`)	
+		},
+		
+		initializeMap:function(){
+            this.map = new ol.Map({
+            target: 'map',
+            layers: [
+                  new ol.layer.Tile({
+                source: new ol.source.OSM(),
+          }),
+            ],
+            view: new ol.View({
+              center: ol.proj.fromLonLat([0, 0]), 
+              zoom: 2, 
+            }),
+          });
+        }
+	}
+
+});

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "17",
+    "korisnickoIme": "nikola",
+    "lozinka": "ss",
+    "ime": "Nikola",
+    "prezime": "Maric",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-25",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 1
+  },
+  {
+    "id": "18",
+    "korisnickoIme": "simona",
+    "lozinka": "123",
+    "ime": "Simona",
+    "prezime": "Simanic",
+    "pol": "Zenski",
+    "datumRodjenja": "2022-12-13",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 5
+  },
+  {
+    "id": "19",
+    "korisnickoIme": "nixa",
+    "lozinka": "123",
+    "ime": "Niksa",
+    "prezime": "Zizu",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-28",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 9
+  },
+  {
+    "id": "20",
+    "korisnickoIme": "milos",
+    "lozinka": "123",
+    "ime": "Milos",
+    "prezime": "Milosevic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-04-12",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 6
+  },
+  {
+    "id": "21",
+    "korisnickoIme": "menader",
+    "lozinka": "123",
+    "ime": "Marko",
+    "prezime": "Markovic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-07-04",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 6
+  },
+  {
+    "id": "10",
+    "korisnickoIme": "nekoIme",
+    "lozinka": "a",
+    "ime": "dsads",
+    "prezime": "dsadsa",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 7
+  },
+  {
+    "id": "11",
+    "korisnickoIme": "Petar01",
+    "lozinka": "pera",
+    "ime": "Petar",
+    "prezime": "Peric",
+    "pol": "Muski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 6
+  },
+  {
+    "id": "12",
+    "korisnickoIme": "panda",
+    "lozinka": "123",
+    "ime": "Jovana",
+    "prezime": "Koricanac",
+    "pol": "Zenski",
+    "datumRodjenja": "2023-05-30",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 2
+  },
+  {
+    "id": "14",
+    "korisnickoIme": "mixa",
+    "lozinka": "111",
+    "ime": "Mihajlo",
+    "prezime": "Markovic",
+    "pol": "Muski",
+    "datumRodjenja": "2022-12-13",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 3
+  },
+  {
+    "id": "15",
+    "korisnickoIme": "branko",
+    "lozinka": "222",
+    "ime": "Branko",
+    "prezime": "Nikovic",
+    "pol": "Muski",
+    "datumRodjenja": "2023-06-28",
+    "uloga": "Menadzer",
+    "rentacarObjekatId": 8
+  }
+]

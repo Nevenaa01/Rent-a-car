@@ -1,0 +1,568 @@
+Vue.component("pocetna", {
+	data: function () {
+		return {
+			objekti: null,
+			pretraga: {nazivObjekta: null, tip: null, lokacija: {id: null, duzina: null, sirina: null, adresa: null}, prosecnaOcena: null},
+			filtriranje: {vrstaVozila: null, tipGoriva: null, otvoreno: false},
+			
+			adrese: null,
+			
+			validnaProsecnaOcena: true,
+			validnaOcenaOd: true,
+			validnaOcenaDo: true,
+			
+			rastuceNaziv: true,
+			rastuceLokacija: true,
+			rastuceOcena: true,
+			
+			dugmePretragaPritisnuto: true,
+			dugmeFiltriranjaPritisnuto: false,
+			
+			map: null,
+			
+			ulogovan: null,
+			korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+			admin:null,
+		     menadzer:null,
+		     kupac:null
+		}
+	},
+	template: ` 
+ 	<div class="pozadina">
+ 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" v-bind:href="'/WebShopREST/#/'">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="navbar-nav">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link active">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/iznajmljivanjeVozila'" class="nav-link"  v-if="ulogovan && kupac">Iznamji</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korisnik.korisnickoIme" class="nav-link" v-if="ulogovan">Profil</a></li>
+                        </ul>
+                        
+                        <ul class="navbar-nav navbar-right">
+                            <li><a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Uloguj se</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/registracija'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Registuj se</a></li>
+                        </ul>
+                    </div>
+                </nav>
+		<br><br><br>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6 d-flex justify-content-end">
+					<input type="radio" v-on:click="prikazZaPretragu" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+					<a class="linkLabela"><label class="btn btnSearch" for="option1">Pretraga</label><a>
+				</div>
+				<div class="col-sm-6 d-flex justify-content-start">
+					<input type="radio" v-on:click="prikazZaFiltriranje" class="btn-check" name="options" id="option2" autocomplete="off">
+					<a class="linkLabela"><label class="btn btnSearch" for="option2">Filtriranje</label><a>
+				</div>
+			</div><br>
+			<div class="col-sm-12">
+				<div class="row pretraga bg-white shadow rounded sadrzajDiva">
+					<div v-if="dugmePretragaPritisnuto">
+		            	<div style="padding-right: 0%" class="row">
+			            	<div class="col-sm-10">
+			            		<h2 class="headerUDivu">Pretraga</h2>
+			            	</div>
+			            	<div class="col-sm-2">
+			            		<button v-on:click="refresh" class="btn px-4 float-end mt-4 btnRefresh"><i class="fa fa-refresh"></i></button>
+			            	</div>
+		            	</div>
+		            			<div class="col-sm-12">
+		                			<label>Naziv rent a car objekta</label>
+		                    		<div class="input-group inputPretraga">
+		                            <div class="input-group">
+										<input type="text" v-model="pretraga.nazivObjekta" class="inputPretraga form-control" placeholder="naziv objekta">                                                
+									</div>
+		                        </div><br>
+		
+		                        <div class="col-sm-12">
+		                            <label>Tip vozila</label>
+		                            <div class="input-group">
+										<select v-model="pretraga.tip" class="inputPretraga form-control" placeholder="tip vozila">
+											<option value="auto">Auto</option>
+											<option value="kombi">Kombi</option>
+											<option value="mobilehome">Mobilehome</option>
+										</select>
+									</div>
+		                        </div><br>
+		                                            
+		                        <div class="col-sm-12">
+		                            <label>Lokacija</label>
+		                                <div class="input-group">
+											<div id="map" style="width: 100%; height: 400px;"></div>
+		                                </div>
+		                        </div><br>
+	
+								<div class="col-sm-12">
+		                            <label>Prosečna ocena</label>
+		                            <div class="input-group">
+										<input type="text" v-model="pretraga.prosecnaOcena" class="inputPretraga form-control" placeholder="prosečna ocena">
+		                            </div>
+		                        <div><label v-if="!validnaProsecnaOcena" class="invalidInputs">*Prosečna ocena je nenegativan broj</label></div>
+		                </div><br>
+		
+						<div class="row">
+							<div class="col-sm-10">
+		                        <button type="submit" v-on:click="ponisti" class="btn px-4 float-end mt-4 btnSearch btnPonisti">Poništi</button>
+		                    </div>
+		                    <div class="col-sm-2">
+		                        <button type="submit" v-on:click="pretrazi" class="btn px-4 float-end mt-4 btnSearch">Pretraži</button>
+		                    </div>
+		                </div>
+		            </div>
+					
+            	</div><br><br>
+				<div v-if="dugmeFiltriranjaPritisnuto">
+						<div style="padding-right: 0%" class="row">
+			            	<div class="col-sm-10">
+			            		<h2 class="headerUDivu">Filtriranje</h2>
+			            	</div>
+			            	<div class="col-sm-2">
+			            		<button v-on:click="refresh" class="btn px-4 float-end mt-4 btnRefresh"><i class="fa fa-refresh"></i></button>
+			            	</div>
+		            	</div>
+		            	<div class="col-sm-12">
+		                	<label>Vrsta vozila</label>
+		                    	<div class="input-group">
+		                            <div class="input-group">
+										<select class="inputPretraga form-control" v-model="filtriranje.vrstaVozila">
+											<option value="manuelni">Manuelni</option>
+											<option value="automatik">Automatik</option>
+										</select>
+									</div>
+		                        </div><br>
+		                                            
+		                        <div class="col-sm-12">
+		                            <label>Vrsta goriva</label>
+		                                <div class="input-group">
+											<select class="inputPretraga form-control" v-model="filtriranje.tipGoriva">
+												<option value="dizel">Dizel</option>
+												<option value="benzin">Benzin</option>
+												<option value="hibrid">Hibrid</option>
+												<option value="elektricni">Električni</option>
+											</select>
+		                                </div>
+		                        </div><br>
+	
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-check">
+                                        	<input class="form-check-input" type="checkbox" id="inlineFormCheck" v-model="filtriranje.otvoreno">
+                                            <label class="form-check-label" for="inlineFormCheck">Otvoreni objekti</label>
+                                    	</div>
+									</div>
+								</div>
+		                </div><br>
+		
+						<div class="row">
+							<div class="col-sm-10">
+		                        <button type="submit" v-on:click="ponistiFiltriranje" class="btn px-4 float-end mt-4 btnSearch btnPonisti">Poništi</button>
+		                    </div>
+		                    <div class="col-sm-2">
+		                        <button type="submit" v-on:click="filtriraj" class="btn px-4 float-end mt-4 btnSearch">Filtriraj</button>
+		                    </div>
+		                </div>
+					</div>
+       		</div>
+			</div><br><br>
+				<table class="styled-table">
+					<thead>
+						<tr>
+							<th class="centralnoPoravnanje logoTd">Logo</th>
+							<th class="centralnoPoravnanje">Naziv <i v-on:click="sort('naziv')" class="fa fa-sort"></i></th>
+							<th class="centralnoPoravnanje">Lokacija <i v-on:click="sort('lokacija')" class="fa fa-sort"></i></th>
+							<th class="centralnoPoravnanje">Prosečna ocena <i v-on:click="sort('prosecnaOcena')" class="fa fa-sort"></i></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(o, index) in objekti" v-on:click="prikaziObjekata(o.id)">
+							<td class="logoTd">
+								<div class="imageDiv">
+									<img v-bind:src = "o.uri" class="imageClass"/>
+								</div>
+							</td>
+							<td>{{o.naziv}}</td>
+							<td>{{o.lokacija.adresa}}</td>
+							<td class="centralnoPoravnanje">{{o.ocena}}</td>
+						</tr>
+					</tbody>
+				</table><br><br>  
+				</div>
+				<div class="container-fluid">
+ 					<footer class="text-center text-lg-start text-white d-flex flex-column">
+					    <section class="d-flex justify-content-between p-4 footerSocijalneMreze">
+					      <div class="me-5">
+					        <span>Posetite nas i na društvenim mrežma:</span>
+					      </div>
+					      
+					      <div>
+					        <a href="https://www.facebook.com/" class="text-white me-4">
+					          <i class="fa fa-facebook"></i>
+					        </a>
+					        <a href="https://www.twitter.com/" class="text-white me-4">
+					          <i class="fa fa-twitter"></i>
+					        </a>
+					        <a href="https://www.google.com/" class="text-white me-4">
+					          <i class="fa fa-google"></i>
+					        </a>
+					        <a href="https://www.instagram.com/" class="text-white me-4">
+					          <i class="fa fa-instagram"></i>
+					        </a>
+					        <a href="https://www.linkedin.com/" class="text-white me-4">
+					          <i class="fa fa-linkedin"></i>
+					        </a>
+					        <a href="https://www.pinterest.com/" class="text-white me-4">
+					          <i class="fa fa-pinterest"></i>
+					        </a>
+					      </div>
+					    </section>
+					
+					    <section class="">
+					      <div class="container text-center text-md-start mt-5">
+					        <div class="row mt-3">
+					          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+					            <h6 class="text-uppercase fw-bold">Rent A Car - F1 edition</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p>
+					              Rent A Car - F1 edition je sajt sa željom da pomogne i ponudi 
+					              vozila koja će učiniti da se osećate kao da ste
+					              pravi vozač F1.
+					            </p>
+					          </div>
+
+					          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+					            <h6 class="text-uppercase fw-bold">Vozila</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p class="text-white">
+					            	Automobil
+					            </p>
+					            <p class="text-white">
+					            	Kombi
+					            </p>
+					            <p class="text-white">
+					            	Mobilehome
+					            </p>
+					          </div>
+
+					          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+					            <h6 class="text-uppercase fw-bold">Korisni linkovi</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p>
+					              <a v-bind:href="'/WebShopREST/#/'" class="text-white">Rent a car objekti</a>
+					            </p>
+					            <p>
+					              <a v-bind:href="'/WebShopREST/#/profil/'" class="text-white">Profil</a>
+					            </p>
+					            <p>
+					              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+					            </p>
+					            <p>
+					              <a href="#!" class="text-white">Dodati kad bude vise stranica</a>
+					            </p>
+					          </div>
+
+					          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+					            <!-- Links -->
+					            <h6 class="text-uppercase fw-bold">Kontakt</h6>
+					            <hr class="mb-4 mt-0 d-inline-block mx-auto footerHr"/>
+					            <p><i class="fa fa-home mr-3"></i> Novi Sad, Srbija</p>
+					            <p><i class="fa fa-envelope mr-3"></i> najjaciTim@gmail.com</p>
+					            <p><i class="fa fa-phone mr-3"></i> +381 61 234 5678</p>
+					            <p><i class="fa fa-print mr-3"></i> +381 61 234 5678</p>
+					          </div>
+					        </div>
+					      </div>
+					    </section>
+					  </footer>
+				  </div>
+		
+	</div>
+	`
+	,
+	methods: {
+		pretrazi : function(){
+			if(this.pretraga.nazivObjekta === null || this.pretraga.nazivObjekta === "")
+				this.pretraga.nazivObjekta = "default";
+			if(this.pretraga.tip === null || this.pretraga.tip === "")
+				this.pretraga.tip = "defaultni";
+			if(this.pretraga.lokacija !== null)
+				if(this.pretraga.lokacija.adresa === null || this.pretraga.lokacija.sirina === "")
+					this.pretraga.lokacija.adresa = "default";
+			if(this.pretraga.prosecnaOcena === null || this.pretraga.prosecnaOcena === "")
+				this.pretraga.prosecnaOcena = 0;
+				
+			if(this.pretraga.prosecnaOcena < 0)
+				this.validnaProsecnaOcena = false;
+			else 
+				this.validnaProsecnaOcena = true;
+			
+			
+			if(this.validnaProsecnaOcena){	
+				if(this.pretraga.lokacija === null){
+					axios
+						.get('rest/rentACarObjekat/pretrazi/' + this.pretraga.nazivObjekta + '/' + this.pretraga.tip + '/' + "default" + '/' + this.pretraga.prosecnaOcena)
+						.then(response => {
+							this.objekti = response.data
+							
+							if(this.pretraga.nazivObjekta === "default")
+								this.pretraga.nazivObjekta = null;
+							if(this.pretraga.tip === "defaultni")
+								this.pretraga.tip = null;
+							if(this.pretraga.lokacija === "default")
+								this.pretraga.lokacija = null;
+							if(this.pretraga.prosecnaOcena === 0)
+								this.pretraga.prosecnaOcena = null;})	
+				}
+				else{
+					axios
+						.get('rest/rentACarObjekat/pretrazi/' + this.pretraga.nazivObjekta + '/' + this.pretraga.tip + '/' + this.pretraga.lokacija.adresa + '/' + this.pretraga.prosecnaOcena)
+						.then(response => {
+							this.objekti = response.data
+							
+							if(this.pretraga.nazivObjekta === "default")
+								this.pretraga.nazivObjekta = null;
+							if(this.pretraga.tip === "defaultni")
+								this.pretraga.tip = null;
+							if(this.pretraga.lokacija === "default")
+								this.pretraga.lokacija = null;
+							if(this.pretraga.prosecnaOcena === 0)
+								this.pretraga.prosecnaOcena = null;})
+				}
+			}
+		},
+		
+		filtriraj : function(){
+			if(this.filtriranje.vrstaVozila === null || this.filtriranje.vrstaVozila === "")
+				this.filtriranje.vrstaVozila = "defaultna"
+			if(this.filtriranje.tipGoriva === null || this.filtriranje.tipGoriva === "")
+				this.filtriranje.tipGoriva = "defaultna"
+			if(this.filtriranje.otvoreno === null || this.filtriranje.otvoreno === false)
+				this.filtriranje.otvoreno = false
+			else
+				this.filtriranje.otvoreno = true
+								
+			axios
+				.get('rest/rentACarObjekat/filtriraj/' + this.filtriranje.vrstaVozila + '/'  + this.filtriranje.tipGoriva + '/' + this.filtriranje.otvoreno)
+				.then(response => {
+					this.objekti = response.data})
+					
+		},
+		
+		refresh : function(){
+			axios
+				.get('rest/rentACarObjekat/dobaviSve')
+				.then(response => (this.objekti = response.data))
+		},
+		
+		ponisti : function(){
+			this.pretraga.nazivObjekta = null
+			this.pretraga.tip = null
+			this.pretraga.lokacija = null
+			this.pretraga.prosecnaOcena = null
+		},
+		
+		ponistiFiltriranje : function(){
+			this.filtriranje.vrstaVozila = null
+			this.filtriranje.tipGoriva = null
+			this.filtriranje.otvoreno = null
+		},
+		
+		sort : function(parametar){
+			var rastuce
+			
+			if(parametar === 'naziv')
+				rastuce = this.rastuceNiz
+			else if(parametar === 'lokacija')
+				rastuce = this.rastuceLokacija
+			else if(parametar === 'prosecnaOcena')
+				rastuce = this.rastuceOcena
+				
+			if(this.pretraga.nazivObjekta === null || this.pretraga.nazivObjekta === "")
+				this.pretraga.nazivObjekta = "default";
+			if(this.pretraga.tip === null || this.pretraga.tip === "")
+				this.pretraga.tip = "defaultni";
+			if(this.pretraga.lokacija !== null)
+				if(this.pretraga.lokacija.adresa === null || this.pretraga.lokacija.sirina === "")
+					this.pretraga.lokacija.adresa = "default";
+			if(this.pretraga.prosecnaOcena === null || this.pretraga.prosecnaOcena === "")
+				this.pretraga.prosecnaOcena = 0;
+				
+			if(this.filtriranje.vrstaVozila === null || this.filtriranje.vrstaVozila === "")
+				this.filtriranje.vrstaVozila = "nema"
+			if(this.filtriranje.tipGoriva === null || this.filtriranje.tipGoriva === "")
+				this.filtriranje.tipGoriva = "nema"
+							
+			axios
+				.get('rest/rentACarObjekat/sort/' + parametar + '/' + rastuce + '/' 
+					+ this.filtriranje.vrstaVozila + '/'  + this.filtriranje.tipGoriva + '/' + this.filtriranje.otvoreno 
+					+ '/' + this.pretraga.nazivObjekta + '/' + this.pretraga.tip + '/' + this.pretraga.lokacija.adresa + '/' + this.pretraga.prosecnaOcena )
+				.then(response => {
+					this.objekti = response.data
+					
+					if(parametar === 'naziv')
+						this.rastuceNiz = !this.rastuceNiz
+					else if(parametar === 'lokacija')
+						this.rastuceLokacija = !this.rastuceLokacija
+					else if(parametar === 'prosecnaOcena')
+						this.rastuceOcena = !this.rastuceOcena
+					})
+		},
+		
+		prikazZaPretragu : function(){
+			this.dugmePretragaPritisnuto = true
+			this.dugmeFiltriranjaPritisnuto = false
+			this.$router.push(0);
+		},
+		
+		prikazZaFiltriranje : function(){
+			this.dugmePretragaPritisnuto = false
+			this.dugmeFiltriranjaPritisnuto = true
+		},
+		
+		prikaziObjekata : function(indx){
+			router.push(`/prikazObjekta/${indx}`)
+		},
+		
+		initializeMap:function(){
+            this.map = new ol.Map({
+            target: 'map',
+            layers: [
+                  new ol.layer.Tile({
+                source: new ol.source.OSM(),
+          }),
+            ],
+            view: new ol.View({
+              center: ol.proj.fromLonLat([0, 0]), 
+              zoom: 2, 
+            }),
+          });
+        }
+	},
+	mounted() {
+		
+		this.initializeMap();
+		
+		var view = new ol.View({
+          center: ol.proj.fromLonLat([21.0059, 44.0165]), 
+          zoom: 5, 
+        });
+        this.map.setView(view);
+		
+		var ovo=this;
+	  	this.map.on('click', function (evt) {
+  
+    	
+    	const coords_click = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+    	
+    	const lon = coords_click[0];
+    	const lat = coords_click[1];
+    	
+		const data_for_url = {lon: lon, lat: lat, format: "json", limit: 1};
+	    const encoded_data = Object.keys(data_for_url).map(function (k) {
+	        return encodeURIComponent(k) + '=' + encodeURIComponent(data_for_url[k])
+	    }).join('&');
+
+    	const url_nominatim = 'https://nominatim.openstreetmap.org/reverse?' + encoded_data;
+    	
+		const layer = new ol.layer.Vector({
+		source: new ol.source.Vector({
+    	features: [
+    	new ol.Feature({
+        	geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+    	})
+    	]
+		}),
+		style: new ol.style.Style({
+		    image: new ol.style.Icon({
+		    anchor: [0.5, 1],
+		    crossOrigin: 'anonymous',
+		    src: 'https://docs.maptiler.com/openlayers/default-marker/marker-icon.png',
+		    })
+		})
+		});
+		
+		const layerId = 'myLayer'; 
+      	const layerToRemove = ovo.map.getLayers().getArray().find(layer => layer.get('id') === layerId);
+
+      	if (layerToRemove) {
+        
+        	ovo.map.removeLayer(layerToRemove);
+      	}
+      	
+		layer.set('id', 'myLayer');
+		ovo.map.addLayer(layer);
+	
+
+    
+	    httpGet(url_nominatim, function (response_text) {   
+	        const data_json = JSON.parse(response_text);   
+	        const res_lon = data_json.lon;
+	        const res_lat = data_json.lat;
+	        const res_address = data_json.address;
+	        
+	        const address_display_name  = data_json.display_name;
+	        const address_postcode      = res_address.postcode;
+	        const address_city          = res_address.city;
+	        const address_house_number  = res_address.house_number;
+	        const address_road          = res_address.road;
+	        
+	        ovo.pretraga.lokacija.duzina = res_lon;
+	        ovo.pretraga.lokacija.sirina = res_lat;
+	        ovo.pretraga.lokacija.adresa = address_road + "," + address_house_number + "," + address_city + "," + address_postcode;
+	        
+	 
+	    });
+	});
+		
+		axios
+			.get('rest/rentACarObjekat/dobaviSve')
+			.then(response => 
+				{this.objekti = response.data;
+				return axios
+					.get('rest/lokacije/dobaviSveAdrese')
+				})
+				.then(response => {
+					this.adrese = response.data
+					return axios.post('rest/korisnik/ulogovan');
+					})
+			.then(response => 
+			{
+				this.korisnik=response.data;
+				if(this.korisnik)
+					this.ulogovan=true;
+				else
+					this.ulogovan=false;
+					
+				if(this.korisnik.uloga==="Administrator")
+						this.admin=true;
+					else
+						this.admin=false;
+				if(this.korisnik.uloga==="Menadzer")
+						this.menadzer=true;
+					else
+						this.menadzer=false;
+				if(this.korisnik.uloga === "Kupac")
+						this.kupac = true;
+				else
+						this.kupac = false;
+			})
+	}
+});
+
+function httpGet(url, callback_function) {
+
+    const getRequest = new XMLHttpRequest();
+    getRequest.open("get", url, true);
+
+    getRequest.addEventListener("readystatechange", function () {
+
+        if (getRequest.readyState === 4 && getRequest.status === 200) {
+
+            callback_function(getRequest.responseText);
+        }
+    });
+
+    getRequest.send();
+}

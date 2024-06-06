@@ -1,0 +1,44 @@
+package services;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import dao.PorudzbinaDAO;
+import dto.PorudzbinaDTO;
+
+@Path("/porudzbina")
+public class PorudzbinaService {
+	@Context
+	ServletContext ctx;
+
+	public PorudzbinaService() {}
+
+	@PostConstruct
+	public void init() {
+		if (ctx.getAttribute("porudzbinaDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("porudzbinaDAO", new PorudzbinaDAO(contextPath));
+		}
+	}
+
+	@POST
+	@Path("/dodaj")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void dodaj(PorudzbinaDTO porudzbinaDTO) {
+		PorudzbinaDAO porudzbinaDAO = (PorudzbinaDAO) ctx.getAttribute("porudzbinaDAO");
+
+		porudzbinaDAO.dodaj(porudzbinaDTO);
+	}
+	
+	@GET
+	@Path("/dobaviPorudzbineKupca/{korisnickoIme}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Porudzbina> dobaviPorudzbineKupca(@PathParam("korisnickoIme") String korisnickoIme){
+		
+	}
+}

@@ -1,0 +1,175 @@
+Vue.component("KreiranjeObjekta", {
+	data: function () {
+		    return {
+			objekat:{naziv:null,geografskaDuzina:null,geografskaSirina:null,adresa:null,broj:null,grad:null,postanskiBroj:null,radnoVreme:null,uri:null,menadzer:null},
+		      menadzeri:null,
+		      validanNaziv: true,
+		      validnaSirina: true,
+		      validnaDuzina: true,
+		      validnaUlica: true,
+		      validanBroj: true,
+		      validanGrad: true,
+		      validanPostanskiBroj: true,
+		      validnoRadnoVreme: true,
+		      validanLogo:true,
+		      validanMenadzer:true,
+		      ulogovan: null,
+		      admin:null,
+		      upisiMenadzera:null,
+		      korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+		      menadzer:null,
+		      kreiranMenadzer:true,
+		      imeMenadzera:null,
+		      admin: null,
+		    	menadzer:null,
+		    	kupac:null,
+		    	map: null
+		    }
+	},
+	template: ` 
+ 	<div>
+ 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" v-bind:href="'/WebShopREST/#/'">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="navbar-nav">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link active">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korisnik.korisnickoIme" class="nav-link" v-if="ulogovan">Profil</a></li>
+                        </ul>
+                        
+                        <ul class="navbar-nav navbar-right">
+                            <li><a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Uloguj se</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/registracija'" class="nav-link" v-if="!ulogovan"><span class="glyphicon glyphicon-log-in"></span> Registuj se</a></li>
+                        </ul>
+                    </div>
+                </nav>
+                
+                <div class="col-sm-12">
+					                            <label>Lokacija</label>
+					                                <div class="input-group">
+														<div id="map" style="width: 100%; height: 400px;"></div>
+					                                </div>
+					                        </div><br>	
+
+ 		
+	</div>	
+	`
+	, 
+	methods : {
+		kreiraj : function(){
+			event.preventDefault()
+			
+			this.validanNaziv= !(this.objekat.naziv === null || this.objekat.naziv === "")
+			this.validnaSirina= !(this.objekat.geografskaSirina === null || this.objekat.geografskaSirina === "")
+			this.validnaDuzina= !(this.objekat.geografskaDuzina === null || this.objekat.geografskaDuzina === "")
+			this.validnaUlica= !(this.objekat.adresa === null || this.objekat.adresa === "")
+		    this.validanBroj=!(this.objekat.broj === null || this.objekat.broj === "")
+		    this.validanGrad=!(this.objekat.grad === null || this.objekat.grad === "")
+		    this.validanPostanskiBroj=!(this.objekat.postanskiBroj === null || this.objekat.postanskiBroj === "")
+		   	this.validnoRadnoVreme=!(this.objekat.radnoVreme === null || this.objekat.radnoVreme === "")
+		   	this.validanLogo=!(this.objekat.uri===null || this.objekat.uri==="")
+			if(this.validanNaziv && this.validnaSirina && this.validnaDuzina && this.validnaUlica && this.validanBroj&& this.validanPostanskiBroj && this.validanGrad &&  this.validnoRadnoVreme&&this.validanLogo){
+				
+				if(this.imeMenadzera)
+					this.objekat.menadzer=this.imeMenadzera
+				else
+					this.objekat.menadzer=this.menadzer.korisnickoIme
+				axios
+					.post('rest/rentACarObjekat/kreiraj',this.objekat)
+					.then(response => {
+						
+						const validan = response.data;
+						if(validan){
+							alert("Uspesno ste kreirali objekat")
+							router.push(`/`)
+							return axios.put("rest/menadzer/dodeliobjekat",this.objekat)
+						}
+						else{
+							alert("Greska priliom kreiranja")
+						}
+					}).then(response=>
+						{
+							const valid=response.data;
+							if(valid)
+								alert("Uspeno!");
+							else
+								alert("Neuspesno!");
+							return axios.post('rest/lokacije/kreiraj',this.objekat);
+						}).then(response => {
+							const valid=response.data;
+							if(valid)
+								alert("Uspeno lokacija!");
+							else
+								alert("Neuspesno lokacija!");
+						})
+					//alert(this.objekat.naziv+" "+this.objekat.geografskaSirina+" "+this.objekat.geografskaDuzina+" "+this.objekat.adresa+" "+this.objekat.broj+" "+this.objekat.grad+" "+this.objekat.postanskiBroj+" "+this.objekat.radnoVreme+" "+this.objekat.uri)
+			}
+		},
+		kreirajMenadzera:function()
+		{
+				router.push(`/registracija`)
+		},
+		
+		initializeMap:function(){
+            this.map = new ol.Map({
+            target: 'map',
+            layers: [
+                  new ol.layer.Tile({
+                source: new ol.source.OSM(),
+          }),
+            ],
+            view: new ol.View({
+              center: ol.proj.fromLonLat([0, 0]), 
+              zoom: 2, 
+            }),
+          });
+        }
+	},
+	mounted(){
+		this.initializeMap();
+		
+		if(this.$route.params.korIme!=="menadzer")
+		{
+			this.imeMenadzera=this.$route.params.korIme;
+			this.kreiranMenadzer=false;
+		}
+			axios.post('rest/korisnik/ulogovan')
+			.then(response => 
+			{
+				this.korisnik=response.data;
+				if(this.korisnik)
+				{
+						this.ulogovan=true;
+						
+				}
+					else
+						this.ulogovan=false;
+						
+				if(this.korisnik.uloga==="Administrator")
+						this.admin=true;
+				else
+						this.admin=false;
+				if(this.korisnik.uloga==="Menadzer")
+						this.menadzer=true;
+				else
+						this.menadzer=false;
+				if(this.korisnik.uloga === "Kupac")
+						this.kupac = true;
+				else
+						this.kupac = false;			
+						
+			
+				return axios.
+                        get('rest/menadzer/ucitajslobodne')
+			})
+			.then(response=>
+			{
+				this.menadzeri=response.data
+				if(this.menadzeri.length )
+					this.upisiMenadzera=false;
+				else
+					this.upisiMenadzera=true;
+			})
+	}
+});

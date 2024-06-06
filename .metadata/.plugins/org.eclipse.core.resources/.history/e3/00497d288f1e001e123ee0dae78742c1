@@ -1,0 +1,188 @@
+body{
+	overflow-x: hidden;
+}
+
+.pozadina{
+	background-color: #d4dece;
+}
+
+h1{
+	font-size: 30px;
+	  color: #fff;
+	  text-transform: uppercase;
+	  font-weight: 300;
+	  text-align: center;
+	  margin-bottom: 15px;
+}
+
+.imageDiv{
+	max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+	width: 100px;
+	height: 100px;
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+  	margin-right: auto;
+    overflow: hidden;
+    border-radius: 100%;
+}
+
+.imageClass{
+	max-width:100%;
+	max-height:100%;
+	object-fit:contain;
+	align-content: center;
+}
+
+.centralnoPoravnanje{
+	text-align: center;
+}
+
+.styled-table {
+    border-collapse: collapse;
+    margin-left: auto;
+  	margin-right: auto;
+  	width: 80%;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #bd7415;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+td{
+	width: 20px;
+	height: 100px;
+}
+
+.logoTd{
+	width: 10px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #bd7415;
+}
+
+.styled-table tbody tr:hover,
+.styled-table tbody tr:nth-of-type(even):hover {
+    background-color: #edaf5e;
+}
+
+.divForma{
+	background-image: url("https://images.unsplash.com/photo-1620591309146-f5b0dc646b28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGNhciUyMGluJTIwbmF0dXJlfGVufDB8fDB8fHww&w=1000&q=80");
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+
+.divForma1{
+	background-image: url("https://images-ext-1.discordapp.net/external/qEuNpGEyU6kDIv46Pm1yihfDNsyEf6wvHnOIh-xgDjU/https/c4.wallpaperflare.com/wallpaper/80/488/25/black-infiniti-car-on-the-road-wallpaper-preview.jpg?width=910&height=558");
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+.crna
+{
+	color:black;
+}
+
+.dugmeBoja{
+	background-color: #d4dece;
+}
+
+.pretraga{
+	border-collapse: collapse;
+    margin-left: auto;
+  	margin-right: auto;
+  	width: 80%;
+}
+
+.inputPretraga{
+	width: 100%;
+}
+
+.sadrzajDiva{
+	padding: 5%;
+}
+
+.headerUDivu{
+	margin-bottom: 5%;
+}
+
+.btnSearch, .btnIzbor{
+	background-color: #bd7415;
+	color: white;
+}
+
+.btnPonisti{
+	margin-right: 4%;
+}
+
+.btnSearch:hover, .btnRefresh:hover, .btnIzbor:hover, .linkLabela:hover, .linkLabela:active, .btn-check:active{
+	background-color: #edaf5e;
+	color: black;
+}
+
+.btnIzbor:active{
+	background-color: #edaf5e;
+}
+
+.btnRefresh{
+	background-color: #bd7415;
+	color: white;
+	float: right;
+}
+
+.invalidInputs{
+	color: red;
+}
+
+.btn-check{
+	background-color: #bd7415;
+}
+
+footer{
+	background-color: #1c2331;
+}
+
+.footerSocijalneMreze{
+	background-color: #bd7415;
+}
+
+.footerHr{
+	width: 60px; 
+	background-color: #fcf0e0; 
+	height: 2px;
+}
+
+.container-fluid{
+	padding: 0%;
+}
+
+.aktivno-dugme {
+    background-color: #edaf5e;
+}

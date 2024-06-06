@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+G:\3.godina\2.semestar\web\web-almost-f1\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+3761441982.index
+3745499084.index
+859265846.index
+3352094518.index
+2942255984.index
+1395366190.index

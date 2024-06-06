@@ -1,0 +1,143 @@
+package dao;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import model.Korisnik;
+import model.Menadzer;
+
+public class MenadzerDAO {
+
+	private Map<Integer, Menadzer> menadzeri = new HashMap();
+	private String csvFilePath;
+
+	public MenadzerDAO() {}
+
+	public MenadzerDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\menadzeri.json");
+
+		ucitajMenadzere();
+	}
+
+	private void ucitajMenadzere() {
+		try
+    	{
+			FileReader fileReader = new FileReader(this.csvFilePath);
+			Gson gson = new Gson();
+			Menadzer[] menadzeriNiz = gson.fromJson(fileReader, Menadzer[].class);
+
+			if(menadzeriNiz ==  null) {
+				return;
+			}
+
+			for(Menadzer m : menadzeriNiz) {
+				menadzeri.put(m.getId(), m);
+			}
+
+			fileReader.close();
+    	} catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
+    	}
+	}
+
+
+	public void upisi() {
+		try
+    	{
+    		FileWriter fileWriter = new FileWriter(this.csvFilePath);
+    		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    		JsonArray jsonArray = new JsonArray();
+
+    		for (Menadzer m: menadzeri.values()){
+    			jsonArray.add(napraviJSON(m));
+    		}
+
+    		String jsonString = gson.toJson(jsonArray);
+    		fileWriter.write(jsonString);
+
+    		fileWriter.close();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Greska pri upisu");
+    	}
+	}
+
+	private Integer napraviID() {
+		try {
+			return menadzeri.size() == 0 ? 1 : menadzeri.keySet().stream().mapToInt(v -> v).max().orElseThrow() + 1;
+		}
+		catch(Exception e) {
+			System.out.println("Id se ne moze napraviti");
+			return null;
+		}
+	}
+
+	public ArrayList<Menadzer> Ucitaj()
+	{
+		return new ArrayList<>(menadzeri.values());
+	}
+
+	public ArrayList<Menadzer> UcitajSlobodne()
+	{
+		return new ArrayList( menadzeri.values()
+				.stream().filter(s-> s.getRentacarObjekat()==-1).collect(Collectors.toList()));
+	}
+
+	private JsonObject napraviJSON(Menadzer korisnik) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", korisnik.getId().toString());
+		jsonObject.addProperty("korisnickoIme", korisnik.getKorisnickoIme());
+		jsonObject.addProperty("lozinka", korisnik.getLozinka());
+		jsonObject.addProperty("ime", korisnik.getIme());
+		jsonObject.addProperty("prezime", korisnik.getPrezime());
+		jsonObject.addProperty("pol", korisnik.getPol());
+		jsonObject.addProperty("datumRodjenja", korisnik.getDatumRodjenja());
+		jsonObject.addProperty("uloga", korisnik.getUloga());
+		jsonObject.addProperty("rentacarObjekatId", korisnik.getRentacarObjekat());
+		return jsonObject;
+	}
+	public boolean Izmeni(String korIme,Integer objekatId)
+	{
+		Menadzer stari=findByKorIme(korIme);
+		stari.setRentacarObjekat(objekatId);
+		upisi();
+		return true;
+	}
+	public Menadzer findByKorIme(String korIme) {
+
+        Menadzer menadzer = new Menadzer();
+        for (Menadzer m : this.menadzeri.values()) {
+			if(m.getKorisnickoIme().equals(korIme))
+				menadzer=m;
+		}
+        return menadzer;
+    }
+	public boolean Dodaj(Korisnik korisnik) {
+		Menadzer m=new Menadzer(korisnik,-1);
+		//m.setUlogaString("Menadzer");
+		m.setId(napraviID());
+		menadzeri.put(m.getId(), m);
+		upisi();
+		return true;
+	}
+
+	public Integer UcitajObjekat(String ikorIme)
+	{
+		return findByKorIme(ikorIme).getRentacarObjekat();
+	}
+	
+	public Menadzer dobaviMenadzera(Integer id) {
+		return null;
+	}
+}

@@ -1,0 +1,19 @@
+package dao;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import model.Komentar;
+
+public class KomentarDAO {
+	private Map<Integer, Komentar> objekti = new HashMap();
+	private String csvFilePath;
+
+	public KomentarDAO() {}
+
+	public KomentarDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\komentari.json");
+
+		ucitajObjekte();
+	}
+}

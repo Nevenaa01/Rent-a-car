@@ -1,0 +1,15 @@
+.stickyKorpa{
+	background-color: #edaf5e;
+	position: -webkit-sticky;
+  	position: sticky;
+  	bottom: 0;
+}
+
+.btnKorpa{
+	word-spacing: 2px;
+}
+
+.stanjeUKorpi{
+	padding-left: 10px;
+	padding-top: 4px;
+}

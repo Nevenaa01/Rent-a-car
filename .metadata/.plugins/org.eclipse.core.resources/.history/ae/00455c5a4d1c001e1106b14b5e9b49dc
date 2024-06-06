@@ -1,0 +1,185 @@
+package dao;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import model.Korisnik;
+import model.RentacarObjekat;
+import model.Vozilo;
+
+public class VoziloDAO {
+	private Map<Integer, Vozilo> vozila = new HashMap();
+	private String csvFilePath;
+
+	public VoziloDAO() {}
+
+	public VoziloDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\vozila.json");
+
+		ucitajVozila();
+	}
+
+	private void ucitajVozila() {
+		try
+    	{
+			FileReader fileReader = new FileReader(this.csvFilePath);
+			Gson gson = new Gson();
+			Vozilo[] vozilaNiz = gson.fromJson(fileReader, Vozilo[].class);
+
+			if(vozilaNiz ==  null) {
+				return;
+			}
+
+			for(Vozilo vozilo : vozilaNiz) {
+				vozila.put(vozilo.getId(), vozilo);
+			}
+
+			fileReader.close();
+    	} catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
+    	}
+	}
+	
+	public void dodajVozilo(Vozilo vozilo) {	
+		vozilo.setId(napraviID());
+		vozila.put(vozilo.getId(), vozilo);
+		upisi();
+	}
+
+	public void upisi() {
+		try
+    	{
+    		FileWriter fileWriter = new FileWriter(this.csvFilePath);
+    		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    		JsonArray jsonArray = new JsonArray();
+
+    		for (Vozilo vozilo : vozila.values()){
+    			jsonArray.add(napraviJSON(vozilo));
+    		}
+
+    		String jsonString = gson.toJson(jsonArray);
+    		fileWriter.write(jsonString);
+
+    		fileWriter.close();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Greska pri upisu");
+    	}
+	}
+
+	private Integer napraviID() {
+		try {
+			return vozila.size() == 0 ? 1 : vozila.keySet().stream().mapToInt(v -> v).max().orElseThrow() + 1;
+		}
+		catch(Exception e) {
+			System.out.println("Id se ne moze napraviti");
+			return null;
+		}
+	}
+
+	private JsonObject napraviJSON(Vozilo vozila) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", vozila.getId().toString());
+		jsonObject.addProperty("marka", vozila.getMarka());
+		jsonObject.addProperty("model", vozila.getModel());
+		jsonObject.addProperty("cena", vozila.getCena());
+		jsonObject.addProperty("tip", vozila.getTip().toString());
+		jsonObject.addProperty("idObjekta", vozila.getIdObjekta());
+		jsonObject.addProperty("vrsta", vozila.getVrsta().toString());
+		jsonObject.addProperty("tipGoriva", vozila.getTipGoriva().toString());
+		jsonObject.addProperty("potrosnja", vozila.getPotrosnja());
+		jsonObject.addProperty("brojVrata", vozila.getBrojVrata());
+		jsonObject.addProperty("brojOsoba", vozila.getBrojOsoba());
+		jsonObject.addProperty("opis", vozila.getOpis());
+		jsonObject.addProperty("slika", vozila.getSlika().toString());
+		jsonObject.addProperty("status", vozila.getStatus().toString());
+		return jsonObject;
+	}
+	
+	public Vozilo findByID(Integer id) {
+        if (!vozila.containsKey(id)) {
+            return null;
+        }
+        Vozilo v = vozila.get(id);
+
+        return v;
+    }
+	
+	public boolean Izmeni(Vozilo v)
+	{
+		Vozilo staro=findByID(v.getId());
+		staro.setMarka(v.getMarka());
+		staro.setModel(v.getModel());
+		staro.setCena(v.getCena());
+		staro.setTip(v.getTip());
+		staro.setVrsta(v.getVrsta());
+		staro.setTipGoriva(v.getTipGoriva());
+		staro.setPotrosnja(v.getPotrosnja());
+		staro.setBrojVrata(v.getBrojVrata());
+		staro.setBrojOsoba(v.getBrojOsoba());
+		staro.setOpis(v.getOpis());
+		staro.setSlika(v.getSlika());
+		staro.setStatus(v.getStatus());
+		upisi();
+		return true;
+	}
+	
+	public boolean Kreiraj(Vozilo vozilo)
+	{
+		Vozilo v=new Vozilo(vozilo,napraviID());
+		if(v!=null)
+		{
+			this.vozila.put(v.getId(), v);
+			upisi();
+			return true;
+		}
+		return false;
+	}
+	public Vozilo NadjiPoslednjeg()
+	{
+		Integer largestKey = Integer.MIN_VALUE;
+	        for (Integer key : this.vozila.keySet()) {
+	            if (key > largestKey) {
+	                largestKey = key;
+	            }
+	        }
+		return this.vozila.get(largestKey);
+	}
+	public ArrayList<Vozilo> dobaviSlobodne(){
+		return new ArrayList(vozila.values().stream()
+					.filter(v -> v.getStatus().toString().equals(Vozilo.StatusVozila.dostupno.toString()))
+					.collect(Collectors.toList()));
+	}
+
+	public ArrayList<Vozilo> dobaviPoIdVozila(String sviId) {
+		ArrayList<Vozilo> trazenaVozila = new ArrayList<>();
+
+		for(String id : sviId.split(",")) {
+			trazenaVozila.add(vozila.get(Integer.parseInt(id)));
+		}
+
+		return trazenaVozila;
+	}
+
+	public ArrayList<Integer> dobaviObjekte(String sviId){
+		ArrayList<Integer> objekti = new ArrayList<>();
+
+		for(String id : sviId.split(",")) {
+			if(!objekti.contains(vozila.get(Integer.parseInt(id)).getIdObjekta()))
+				objekti.add(vozila.get(Integer.parseInt(id)).getIdObjekta());
+		}
+
+		return objekti;
+	}
+}

@@ -1,0 +1,22 @@
+package services;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
+
+@Path("/komentar")
+public class KomentarService {
+	@Context
+	ServletContext ctx;
+
+	public KomentarService() {}
+
+	@PostConstruct
+	public void init() {
+		if (ctx.getAttribute("komentarDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("komentarDAO", new KomentarDAO(contextPath));
+		}
+	}
+}

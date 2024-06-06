@@ -1,0 +1,41 @@
+package dto;
+
+import java.util.ArrayList;
+
+import model.RentacarObjekat;
+
+public class RequestData {
+	private String parametar;
+    private boolean rastuciRedosled;
+    private ArrayList<RentacarObjekat> prosledjeniObjekti;
+    
+	public RequestData() {
+		super();
+	}
+	public RequestData(String parametar, boolean rastuciRedosled, ArrayList<RentacarObjekat> prosledjeniObjekti) {
+		super();
+		this.parametar = parametar;
+		this.rastuciRedosled = rastuciRedosled;
+		this.prosledjeniObjekti = prosledjeniObjekti;
+	}
+	public String getParametar() {
+		return parametar;
+	}
+	public void setParametar(String parametar) {
+		this.parametar = parametar;
+	}
+	public boolean isRastuciRedosled() {
+		return rastuciRedosled;
+	}
+	public void setRastuciRedosled(boolean rastuciRedosled) {
+		this.rastuciRedosled = rastuciRedosled;
+	}
+	public ArrayList<RentacarObjekat> getProsledjeniObjekti() {
+		return prosledjeniObjekti;
+	}
+	public void setProsledjeniObjekti(ArrayList<RentacarObjekat> prosledjeniObjekti) {
+		this.prosledjeniObjekti = prosledjeniObjekti;
+	}
+    
+    
+}

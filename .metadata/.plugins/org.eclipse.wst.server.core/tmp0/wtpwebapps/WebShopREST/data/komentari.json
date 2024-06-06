@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "fdddsda",
+    "ocena": 4,
+    "status": "odobreno"
+  },
+  {
+    "id": "2",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "komenatr",
+    "ocena": 5,
+    "status": "odobreno"
+  },
+  {
+    "id": "3",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "afdsfv",
+    "ocena": 1,
+    "status": "odobreno"
+  },
+  {
+    "id": "4",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "zcvcvz",
+    "ocena": 2,
+    "status": "odobreno"
+  },
+  {
+    "id": "5",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "gshhet",
+    "ocena": 3,
+    "status": "naCekanju"
+  },
+  {
+    "id": "6",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "fdddsda",
+    "ocena": 4,
+    "status": "naCekanju"
+  },
+  {
+    "id": "7",
+    "idKupca": 9,
+    "idObjekta": 1,
+    "komentar": "sve najbolje",
+    "ocena": 5,
+    "status": "odobreno"
+  },
+  {
+    "id": "8",
+    "idKupca": 9,
+    "idObjekta": 5,
+    "komentar": "nije lose",
+    "ocena": 4,
+    "status": "odobreno"
+  },
+  {
+    "id": "9",
+    "idKupca": 1,
+    "idObjekta": 1,
+    "komentar": "komentar",
+    "ocena": 3,
+    "status": "naCekanju"
+  }
+]

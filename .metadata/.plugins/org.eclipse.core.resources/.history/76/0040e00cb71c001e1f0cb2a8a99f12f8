@@ -1,0 +1,225 @@
+package dao;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import converters.LocalDateTimeConverter;
+import dto.PorudzbinaDTO;
+import model.Lokacija;
+import model.Porudzbina;
+import model.RentacarObjekat;
+import model.Vozilo;
+
+public class PorudzbinaDAO {
+	private Map<String, Porudzbina> porudzbine = new HashMap();
+	private String csvFilePath;
+
+	public PorudzbinaDAO() {}
+
+	public PorudzbinaDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\porudzbine.json");
+
+		ucitajPorudzbine();
+		for(Porudzbina porudzbina : porudzbine.values()) {
+			System.out.println(porudzbina.getId());
+		}
+	}
+
+	private void ucitajPorudzbine() {
+		try
+    	{
+			FileReader fileReader = new FileReader(this.csvFilePath);
+			Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
+                    .create();
+			Porudzbina[] porudzbineNiz = gson.fromJson(fileReader, Porudzbina[].class);
+
+			if(porudzbineNiz ==  null) {
+				return;
+			}
+
+			for(Porudzbina porudzbina : porudzbineNiz) {
+				porudzbine.put(porudzbina.getId(), porudzbina);
+			}
+
+			fileReader.close();
+    	} catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
+    	}
+	}
+
+	public void dodajPorudzbinu(Porudzbina porudzbina) {
+		porudzbine.put(porudzbina.getId(), porudzbina);
+		upisi();
+	}
+
+	public void upisi() {
+		try
+    	{
+    		FileWriter fileWriter = new FileWriter(this.csvFilePath);
+    		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    		JsonArray jsonArray = new JsonArray();
+
+    		for (Porudzbina porudzbina : porudzbine.values()){
+    			jsonArray.add(napraviJSON(porudzbina));
+    		}
+
+    		String jsonString = gson.toJson(jsonArray);
+    		fileWriter.write(jsonString);
+
+    		fileWriter.close();
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println("Greska pri upisu");
+    	}
+	}
+
+	private static final String KARAKTERI = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final int IDDUZINA = 10;
+
+    public static String generisiId() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < IDDUZINA; i++) {
+            int randomIndex = random.nextInt(KARAKTERI.length());
+            char randomKarakter = KARAKTERI.charAt(randomIndex);
+            sb.append(randomKarakter);
+        }
+
+        return sb.toString();
+    }
+
+	private JsonObject napraviJSON(Porudzbina porudzbina) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", porudzbina.getId());
+
+		JsonArray vozilaZaUpis = new JsonArray();
+		for(Vozilo vozilo : porudzbina.getVozila()) {
+			vozilaZaUpis.add(napraviVoziloJSON(vozilo));
+		}
+		jsonObject.add("vozila", vozilaZaUpis);
+
+		JsonObject objekatZaUpis = new JsonObject();
+		jsonObject.add("objekat", objekatZaUpis);
+		jsonObject.addProperty("datumIznajmljivanja", porudzbina.getDatumIznajmljivanja().toString());
+		jsonObject.addProperty("trajanjeNajma", porudzbina.getTrajanjeNajma());
+		jsonObject.addProperty("cena", porudzbina.getCena());
+		jsonObject.addProperty("kupac", porudzbina.getKupac());
+		jsonObject.addProperty("status", porudzbina.getStatus().toString());
+		return jsonObject;
+	}
+
+	private JsonObject napraviVoziloJSON(Vozilo vozila) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", vozila.getId().toString());
+		jsonObject.addProperty("marka", vozila.getMarka());
+		jsonObject.addProperty("model", vozila.getModel());
+		jsonObject.addProperty("cena", vozila.getCena());
+		jsonObject.addProperty("tip", vozila.getTip().toString());
+		jsonObject.addProperty("vrsta", vozila.getVrsta().toString());
+		jsonObject.addProperty("tipGoriva", vozila.getTipGoriva().toString());
+		jsonObject.addProperty("potrosnja", vozila.getPotrosnja());
+		jsonObject.addProperty("brojVrata", vozila.getBrojVrata());
+		jsonObject.addProperty("brojOsoba", vozila.getBrojOsoba());
+		jsonObject.addProperty("opis", vozila.getOpis());
+		jsonObject.addProperty("slika", vozila.getSlika().toString());
+		jsonObject.addProperty("status", vozila.getStatus().toString());
+		return jsonObject;
+	}
+
+	private JsonObject napraviJSON(RentacarObjekat objekat) {
+		JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id", objekat.getId().toString());
+        jsonObject.addProperty("naziv", objekat.getNaziv());
+        jsonObject.addProperty("radnoVreme", objekat.getRadnoVreme());
+        jsonObject.addProperty("status", objekat.getStatus().toString());
+        JsonObject lokacija= napraviJSONLokacija(objekat.getLokacija());
+        jsonObject.add("lokacija", lokacija);
+        jsonObject.addProperty("uri", objekat.getUri().toString());
+        jsonObject.addProperty("ocena", objekat.getOcena());
+        JsonArray jsonArray = new JsonArray();
+
+        for (Vozilo auto : objekat.getVozila()){
+            jsonArray.add(napraviVoziloJSON(auto));
+        }
+
+        jsonObject.add("vozila",jsonArray);
+        return jsonObject;
+	}
+
+	private JsonObject napraviJSONLokacija(Lokacija lokacija) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", lokacija.getId().toString());
+		jsonObject.addProperty("duzina", lokacija.getDuzina());
+		jsonObject.addProperty("sirina", lokacija.getSirina());
+		jsonObject.addProperty("adresa", lokacija.getAdresa());
+		return jsonObject;
+	}
+
+	public ArrayList<Porudzbina> dobaviSve(){
+		return new ArrayList(porudzbine.values());
+	}
+
+	public ArrayList<Porudzbina> dobaviPoIdVozila(Integer voziloId){
+		return new ArrayList(porudzbine.values().stream()
+				.filter(p -> p.getVozila().stream().anyMatch(v -> v.getId().equals(voziloId)))
+				.collect(Collectors.toList()));
+	}
+
+	public void dodaj(PorudzbinaDTO porudzbinaDTO) {
+
+		for(RentacarObjekat objekat : porudzbinaDTO.getObjekti()) {
+			String id= generisiId();
+			while(porudzbine.keySet().contains(id)) {
+				 id = generisiId();
+			}
+
+
+			LocalDateTime datum = LocalDateTime.of(Integer.parseInt(porudzbinaDTO.getDatumIznajmljivanja().split("-")[0]),
+					Integer.parseInt(porudzbinaDTO.getDatumIznajmljivanja().split("-")[1]),
+					Integer.parseInt(porudzbinaDTO.getDatumIznajmljivanja().split("-")[2]),
+					12, 00);
+
+			Double ukupnaCena = 0.0;
+
+			for(Vozilo vozilo : porudzbinaDTO.getVozila().stream().filter(v -> v.getIdObjekta().equals(objekat.getId()))
+					.collect(Collectors.toList())) {
+				ukupnaCena += vozilo.getCena();
+			}
+
+			Porudzbina porudzbina = new Porudzbina(
+					id,
+					new ArrayList(porudzbinaDTO.getVozila().stream().filter(v -> v.getIdObjekta().equals(objekat.getId()))
+						.collect(Collectors.toList())),
+					objekat,
+					datum,
+					porudzbinaDTO.getTrajanjeNajma(),
+					ukupnaCena,
+					porudzbinaDTO.getKupac(),
+					porudzbinaDTO.getKorisnickoImeKupca(),
+					porudzbinaDTO.getStatus()
+					);
+
+			porudzbine.put(id, porudzbina);
+
+			upisi();
+		}
+	}
+	
+	public ArrayList<Porudzbina> dobaviPorudzbineKupca(String korisnickoIme){
+		return null;
+	}
+}

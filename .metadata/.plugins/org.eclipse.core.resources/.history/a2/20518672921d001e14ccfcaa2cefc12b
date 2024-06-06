@@ -1,0 +1,46 @@
+package dao;
+
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+
+import model.Komentar;
+import model.RentacarObjekat;
+
+public class KomentarDAO {
+	private Map<Integer, Komentar> objekti = new HashMap();
+	private String csvFilePath;
+
+	public KomentarDAO() {}
+
+	public KomentarDAO(String contextPath) {
+		this.csvFilePath = contextPath.replace("\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\WebShopREST\\", "\\Rentacar\\Rentacar\\WebContent\\data\\komentari.json");
+
+		ucitajKomentare();
+	}
+	
+	private void ucitajKomentare() {
+		try
+    	{
+			FileReader fileReader = new FileReader(this.csvFilePath);
+			Gson gson = new Gson();
+			RentacarObjekat[] objektiNiz = gson.fromJson(fileReader, RentacarObjekat[].class);
+
+			if(objektiNiz ==  null) {
+				return;
+			}
+
+			for(RentacarObjekat objekat : objektiNiz) {
+				objekti.put(objekat.getId(), objekat);
+			}
+
+			fileReader.close();
+    	} catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
+    		System.out.println("nesto");
+    	}
+	}
+}

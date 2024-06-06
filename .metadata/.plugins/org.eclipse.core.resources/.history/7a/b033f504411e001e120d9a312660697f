@@ -1,0 +1,76 @@
+package model;
+
+import java.util.ArrayList;
+
+public class Kupac extends Korisnik {
+	private ArrayList<Porudzbina> svaIznajmljivanja;
+	private Integer korpaId;
+	private Double brojBodova;
+	private String tipKupca;
+	private Integer brojOtkazivanja;
+
+
+
+
+	public ArrayList<Porudzbina> getSvaIznajmljivanja() {
+		return svaIznajmljivanja;
+	}
+
+
+
+	public void setSvaIznajmljivanja(ArrayList<Porudzbina> svaIznajmljivanja) {
+		this.svaIznajmljivanja = svaIznajmljivanja;
+	}
+
+
+
+
+
+	public Integer getKorpaId() {
+		return korpaId;
+	}
+	public void setKorpa(Integer korpaId) {
+		this.korpaId = korpaId;
+	}
+
+
+
+	public Double getBrojBodova() {
+		return brojBodova;
+	}
+
+
+
+	public void setBrojBodova(Double brojBodova) {
+		this.brojBodova = brojBodova;
+	}
+
+
+
+	public String getTipKupca() {
+		return tipKupca;
+	}
+
+
+	public void setTipKupca(String tipKupca) {
+		this.tipKupca = tipKupca;
+	}
+
+
+
+	public Kupac(String korisnickoIme, String lozinka, String ime, String prezime, Pol pol, String datumRodjenja,
+			Uloga uloga, ArrayList<Porudzbina> svaIznajmljivanja, Integer korpa, Double brojBodova, String tipKupca) {
+		super(korisnickoIme, lozinka, ime, prezime, pol, datumRodjenja, uloga);
+		this.svaIznajmljivanja = svaIznajmljivanja;
+		this.korpaId = korpa;
+		this.brojBodova = brojBodova;
+		this.tipKupca = tipKupca;
+	}
+
+
+
+	public Kupac() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

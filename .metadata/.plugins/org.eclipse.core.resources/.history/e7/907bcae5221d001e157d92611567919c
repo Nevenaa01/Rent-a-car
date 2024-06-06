@@ -1,0 +1,139 @@
+Vue.component("PrikazKorisnika", {
+	data: function () {
+		    return {
+		     korisnik:{korisnickoIme:"",uloga:"",ime:"",prezime:"",pol:"",datumRodjenja:"",lozinka:"",id:""},
+		     korIme:"",
+		     ulogovan:null,
+		     admin:null,
+		     menadzer:null,
+		     kupac:null,
+		     objekatId:null
+		    }
+	},
+	template: ` 
+	<div>
+	<link rel="stylesheet" href="profile.css">
+		<div v-if="this.ulogovan">
+	      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#">Rent A Car - F1 edition</a>
+                        </div>
+                        <ul class="navbar-nav">
+                            <li><a v-bind:href="'/WebShopREST/#/'" class="nav-link active">Objekti</a></li>
+                            <li><a v-bind:href="'/WebShopREST/#/profil/'+this.korIme" class="nav-link">Profil</a></li>
+                        </ul>
+                        
+                        
+                    </div>
+                </nav>
+	    </div>
+	        <div class="col-sm-12"  v-if="this.ulogovan">
+	            <div class="d-flex justify-content-center align-items-center marginagornja">
+	                <img src="Img/profile.png" alt="Image" style="width:25%">
+	            </div>
+	        </div>
+	        
+	        <div class="col-sm-12 d-flex justify-content-center align-items-center marginagornja"  v-if="this.ulogovan">
+	            <div>
+	                <label class="velikiFont"><b>Korisnicko ime:</b> {{korisnik.korisnickoIme}}</label><br>
+	                <label class="velikiFont"><b>Uloga: </b>{{korisnik.uloga}}</label><br>
+	                <label class="velikiFont"><b>Ime: </b>{{korisnik.ime}}</label><br>
+	                <label class="velikiFont"><b>Prezime: </b>{{korisnik.prezime}}</label><br>
+	            </div>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.ulogovan">
+	                <button class="izmeniB velikiFont" value="Izmeni profil" v-on:click="izmeniKorisnika(korIme)">Izmeni profil</button>
+	        </div>
+	        <div v-if="!this.ulogovan">
+	        	<label>Nisi ulogovan!</label><br>
+	        	<a v-bind:href="'/WebShopREST/#/loggovanje'" class="nav-link">Uloguj se</a></li>
+	        </div>
+	         <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.admin">
+	                <button class="izmeniB velikiFont" value="Kreiraj novi objekat" v-on:click="kreirajObjekat()">Kreiraj novi objekat</button>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.admin">
+	                <button class="izmeniB velikiFont" value="Vidi sve korisnike" v-on:click="sviKorisnici()">Vidi sve korisnike</button>
+	        </div>
+	         <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.menadzer">
+	                <button class="izmeniB velikiFont" value="Sva vozila" v-on:click="PrikazVozila(objekatId)">Sva vozila</button>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.kupac">
+	                <button class="izmeniB velikiFont" v-on:click="prikazPorudzbinaKupac">Sve porudžbine</button>
+	        </div>
+	        <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.menadzer">
+	                <button class="izmeniB velikiFont" v-on:click="prikazPorudzbinaMenadzer">Sve porudžbine</button>
+	        </div>
+	         <div class="col-sm-12 d-flex justify-content-center align-items-cente marginagornja"  v-if="this.ulogovan">
+	                <button class="izmeniB velikiFont" value="Izmeni profil" v-on:click="izlogujSe()">Izloguj se</button>
+	        </div>
+	</div>
+	`,
+	mounted(){
+		this.korIme=this.$route.params.korIme;
+		if((this.korIme==="")||!(this.korIme==="undefined"))
+		{
+			
+		axios.get("rest/korisnik/ucitaj/"+this.korIme)
+		.then(response => {
+		this.korisnik = response.data
+		this.ulogovan=true;
+		if(this.korisnik.uloga==="Administrator")
+							this.admin=true;
+						else
+							this.admin=false;
+		if(this.korisnik.uloga==="Menadzer")
+							this.menadzer=true;
+						else
+							this.menadzer=false;
+		if(this.korisnik.uloga === "Kupac")
+			this.kupac = true;
+		else
+			this.kupac = false;
+			
+		return axios.get("rest/menadzer/objekat/"+this.korIme)}).then(response=>
+		{
+			this.objekatId=response.data
+		});
+		
+		}
+		
+		
+	}
+	, 
+	methods : {
+		izmeniKorisnika: function(korIme){
+			event.preventDefault()
+			router.push(`/izmenaKorisnika/${korIme}`);
+		},
+		izlogujSe:function()
+		{
+			event.preventDefault()
+			axios.post('rest/korisnik/izlogujse');
+			router.push(`/`);
+		},
+		kreirajObjekat: function()
+		{
+			event.preventDefault()
+			router.push(`/kreiranjeobjekta/menadzer`);
+		},
+		PrikazVozila: function(objId)
+		{
+			event.preventDefault()
+			router.push(`/prikazsvihvozila/${objId}`);
+		},
+		sviKorisnici: function()
+		{
+			event.preventDefault()
+			router.push(`/prikazsvihkorisnika`);
+		},
+		
+		prikazPorudzbinaKupac : function(){
+			router.push(`/prikazPorudzbina`)
+		},
+		
+		prikazPorudzbinaMenadzer : function(){
+			router.push(`/prikazPorudzbinaMenadzer`)
+		}
+	}
+});
